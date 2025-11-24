@@ -1,12 +1,14 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthNavigator } from './src/navigation';
+import HomeScreen from './src/screens/App/HomeScreen/HomeScreen';
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <AuthNavigator />
-    </NavigationContainer>
+    <HomeScreen />
+    // <NavigationContainer>
+    //   <AuthNavigator />
+    // </NavigationContainer>
   );
 };
 
