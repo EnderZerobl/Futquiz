@@ -39,16 +39,3 @@ yarn-error.*
 # generated native folders
 /ios
 /android
-
-# Dependências
-/node_modules
-/android/.gradle
-/ios/Pods
-/ios/build
-
-# Arquivos de Cache e Logs
-.expo/
-*.log
-
-# Outros
-*.lock
