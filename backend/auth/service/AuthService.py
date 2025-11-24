@@ -3,7 +3,7 @@ from auth.interfaces.IAuthRepository import IAuthRepository
 from auth.schemas.user_schema import UserInput, UserView, UserEntity
 from fastapi import HTTPException, status
 from typing import Dict, Optional
-from shared.security import hash_password, verify_password, create_access_token 
+from shared.security import get_password_hash, verify_password, create_access_token
 
 class AuthService(IAuthService):
     def __init__(self, repository: IAuthRepository):
@@ -15,7 +15,7 @@ class AuthService(IAuthService):
         
         user_data = {
             "email": user_input.email,
-            "password_hash": hash_password(user_input.password),
+            "password_hash": get_password_hash(user_input.password),
             "name": user_input.name
         }
         
