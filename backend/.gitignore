@@ -1,0 +1,14 @@
+# Ignorar pastas de cache
+__pycache__/
+*.pyc
+
+# Ignorar ambientes virtuais
+venv/
+.env/
+
+# Ignorar configurações de IDEs
+.vscode/
+.idea/
+
+# Ignorar arquivos de log
+*.log
