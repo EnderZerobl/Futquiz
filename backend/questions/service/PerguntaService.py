@@ -1,6 +1,6 @@
 from typing import List
-from service.IPerguntaService import IPerguntaService
-from repository.IPerguntaRepository import IPerguntaRepository
+from questions.service.IPerguntaService import IPerguntaService
+from questions.repository.IPerguntaRepository import IPerguntaRepository
 from questions.schemas.PerguntaInputModel import PerguntaInputModel 
 from questions.schemas.PerguntaViewModel import PerguntaViewModel
 

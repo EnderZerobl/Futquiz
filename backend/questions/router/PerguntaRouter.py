@@ -2,8 +2,8 @@ from fastapi import FastAPI, APIRouter, Depends, status, HTTPException
 from typing import List, Callable
 from questions.schemas.PerguntaInputModel import PerguntaInputModel 
 from questions.schemas.PerguntaViewModel import PerguntaViewModel
-from repository.IPerguntaRepository import IPerguntaRepository 
-from service.IPerguntaService import IPerguntaService 
+from questions.repository.IPerguntaRepository import IPerguntaRepository 
+from questions.service.IPerguntaService import IPerguntaService 
 
 
 # ----------------------------------------------------
