@@ -1,20 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { AuthNavigator } from './src/navigation';
 
-export default function App() {
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>OOPA</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <AuthNavigator />
+    </NavigationContainer>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
