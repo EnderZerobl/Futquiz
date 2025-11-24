@@ -71,7 +71,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#1EAD47', 
+    backgroundColor: '#33CA7F', 
   },
   container: {
     flex: 1,

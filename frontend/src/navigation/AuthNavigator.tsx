@@ -5,6 +5,7 @@ import { AuthStackParamList } from './types';
 import LoginScreen from '../screens/Auth/LoginScreen/LoginScreen';
 import RegisterScreen from '../screens/Auth/RegisterScreen/RegisterScreen';
 import ForgotPasswordScreen from '../screens/Auth/ForgotPassword/ForgotPassword';
+import WelcomeScreen from '../screens/Auth/WelcomeScreen/WelcomeScreen';
 
 const ArrowIcon = require('../../assets/icons/Arrow left-circle.png'); 
 
@@ -14,11 +15,12 @@ const Stack = createStackNavigator<AuthStackParamList>();
 export default function AuthNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="LoginScreen" 
+      initialRouteName="WelcomeScreen" 
       screenOptions={{
         headerShown: false, 
       }}
     >
+      <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       
@@ -28,7 +30,7 @@ export default function AuthNavigator() {
         options={({ navigation }) => ({
           headerShown: true, 
           headerStyle: {
-            backgroundColor: '#1EAD47', 
+            backgroundColor: '#33CA7F', 
             elevation: 0, 
             shadowOpacity: 0, 
             height: 100, 

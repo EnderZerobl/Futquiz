@@ -91,7 +91,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#1EAD47', 
+    backgroundColor: '#33CA7F', 
   },
   scrollContainer: {
     flexGrow: 1,

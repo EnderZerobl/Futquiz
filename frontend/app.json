@@ -12,12 +12,14 @@
       "backgroundColor": "#33CA7F"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.futquiz.app"
     },
     "android": {
+      "package": "com.futquiz.app",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/app/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/shoot.png",
+        "backgroundColor": "#33CA7F"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
