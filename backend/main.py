@@ -10,8 +10,8 @@ from auth.repository.AuthRepository import AuthRepository
 from auth.interfaces.IAuthService import IAuthService as IAuthServ
 from auth.service.AuthService import AuthService
 
-def get_pergunta_repository() -> IPerguntaRepository:
-    return PerguntaRepository()
+def get_pergunta_repository(db_session: Session = Depends(get_db)) -> IPerguntaRepository:
+    return PerguntaRepository(db = db_session)
 
 def get_pergunta_service(
     repository: IPerguntaRepository = Depends(get_pergunta_repository)

@@ -9,7 +9,7 @@ class PerguntaService(IPerguntaService):
     def __init__(self, repository: IPerguntaRepository):
         self.repository = repository
 
-    async def validar_dados_pergunta(self, dados_pergunta: PerguntaInputModel):
+    def validar_dados_pergunta(self, dados_pergunta: PerguntaInputModel):
         
         if dados_pergunta.indice_opcao_correta < 0 or \
            dados_pergunta.indice_opcao_correta >= len(dados_pergunta.opcoes):
@@ -20,14 +20,14 @@ class PerguntaService(IPerguntaService):
             
         #Poderia haver mais validações aqui (ex: profanidade, tamanho do texto, etc.)
 
-    async def criar_pergunta(self, dados_pergunta: PerguntaInputModel) -> PerguntaViewModel:
+    def criar_pergunta(self, dados_pergunta: PerguntaInputModel) -> PerguntaViewModel:
 
-        await self.validar_dados_pergunta(dados_pergunta)
+        self.validar_dados_pergunta(dados_pergunta)
 
-        return await self.repository.salvar_pergunta(dados_pergunta)
+        return self.repository.salvar_pergunta(dados_pergunta)
 
-    async def listar_perguntas(self) -> List[PerguntaViewModel]:
-        perguntas = await self.repository.listar_perguntas()
+    def listar_perguntas(self) -> List[PerguntaViewModel]:
+        perguntas = self.repository.listar_perguntas()
 
         # Talvez aplicar lógica de negócio na listagem (Ex: ordenar, filtrar por status ativo, etc.)
         return perguntas
