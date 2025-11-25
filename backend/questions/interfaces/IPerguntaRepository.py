@@ -6,9 +6,9 @@ from questions.schemas.PerguntaViewModel import PerguntaViewModel
 class IPerguntaRepository(ABC):
     
     @abstractmethod
-    async def salvar_pergunta(self, pergunta: PerguntaInputModel) -> PerguntaViewModel:
+    def salvar_pergunta(self, pergunta: PerguntaInputModel) -> PerguntaViewModel:
         raise NotImplementedError
         
     @abstractmethod
-    async def listar_perguntas(self) -> List[PerguntaViewModel]:
+    def listar_perguntas(self) -> List[PerguntaViewModel]:
         raise NotImplementedError
