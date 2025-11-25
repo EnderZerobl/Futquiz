@@ -11,11 +11,12 @@ from auth.interfaces.IAuthRepository import IAuthRepository as IAuthRepo
 from auth.repository.AuthRepository import AuthRepository
 from auth.interfaces.IAuthService import IAuthService as IAuthServ
 from auth.service.AuthService import AuthService
-from auth.router.UserRouter import router as user_router # Importado
+from auth.router.UserRouter import router as user_router
 from auth.interfaces.IUserRepository import IUserRepository
 from auth.repository.UserRepository import UserRepository
 from auth.interfaces.IUserService import IUserService
 from auth.service.UserService import UserService
+from admin.router import router as admin_router 
 
 
 def get_auth_repository(db: Session = Depends(get_db)) -> IAuthRepo:
@@ -60,5 +61,5 @@ app.dependency_overrides[IPerguntaRepository] = get_pergunta_repository
 
 
 app.include_router(auth_router)
-app.include_router(user_router, prefix="/admin") 
 app.include_router(pergunta_router)
+app.include_router(admin_router)

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from models.Entities.User import User 
+from auth.model import User 
 
 class AdminRepository:
     def __init__(self, db: Session):

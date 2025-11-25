@@ -49,7 +49,7 @@ class AuthService(IAuthService):
         if not verify_password(credentials['password'], user_entity.password_hash):
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
             
-        access_token = create_access_token(data={"sub": user_entity.email, "user_id": user_entity.id})
+        access_token = create_access_token(data={"sub": user_entity.email, "user_id": user_entity.id, "is_admin": user_entity.is_admin})
         return access_token
 
 def get_current_admin(
