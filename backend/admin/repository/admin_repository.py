@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
-from models.Entities.User import User 
+from auth.model import User
+from admin.interfaces.IAdminRepository import IAdminRepository # <--- Importe a Interface
 
-class AdminRepository:
+# Herda da Interface
+class AdminRepository(IAdminRepository):
     def __init__(self, db: Session):
         self.db = db
 
@@ -32,7 +34,7 @@ class AdminRepository:
         self.db.refresh(user)
         return user
 
-    def delete_user(self, user_id: int):
+    def delete_user(self, user_id: int) -> bool:
         user = self.db.query(User).filter(User.id == user_id).first()
         if user:
             self.db.delete(user)
