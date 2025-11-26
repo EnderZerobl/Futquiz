@@ -5,7 +5,7 @@ Este repositório contém o código completo para a aplicação FutQuiz, desenvo
 💡 Status e Requisitos Implementados
 
 Esta entrega cobre os requisitos essenciais de Segurança, Autenticação e a base de Conteúdo, demonstrando a aplicação dos princípios SOLID.
-REQ	Domínio	Descrição	Status
+REQ	Domínio	Descrição da Funcionalidade	Status
 REQ 01	Manter Usuário	Implementação da Inclusão (Cadastro) e Consulta de usuários (base para o CRUD completo).	COMPLETO
 REQ 09	Autenticação	Login, validação de credenciais e emissão de JSON Web Tokens (JWT) para proteger rotas.	COMPLETO
 REQ 04	Questões	Criação de Perguntas: Implementação do endpoint restrito a usuários com privilégios de Administrador.	COMPLETO
@@ -21,6 +21,8 @@ Pré-requisitos
     Docker
 
     Docker Compose
+
+    Link do Design: https://www.figma.com/design/bf74THL929V4aUCebkVzXZ/App.-Eng-Software?node-id=0-1&t=pr5BtIwzgbrJ7b2X-1
 
 1. Inicialização do Projeto
 
@@ -56,7 +58,4 @@ Acesse em seu navegador: http://127.0.0.1:8000/docs
 
 2. Design e Estrutura
 
-O design visual do aplicativo móvel, que serve de base para a implementação do Frontend, está disponível no Figma. A estrutura de Microsserviços e a aplicação dos princípios SOLID (SRP, DIP) no Backend são comprovadas pela suíte de testes unitários.
-
-Link do Design: https://www.figma.com/design/bf74THL929V4aUCebkVzXZ/App.-Eng-Software?node-id=0-1&t=pr5BtIwzgbrJ7b2X-1
-Link do Design: https://www.figma.com/design/bf74THL929V4aUCebkVzXZ/App.-Eng-Software?node-id=0-1&t=pr5BtIwzgbrJ7b2X-1
+A estrutura orientada à serviços e a aplicação dos princípios SOLID (SRP, DIP) no Backend são comprovadas pela suíte de testes unitários.
