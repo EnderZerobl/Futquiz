@@ -24,10 +24,7 @@ class AuthRepository(IAuthRepository):
         except IntegrityError:
             self.session.rollback()
             raise ValueError("Este email já está registrado.")
-        except Exception as e:
-            self.session.rollback()
-            raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno ao criar usuário.")
-
+        
     def find_by_email(self, email: str) -> Optional[UserEntity]:
         try:
             stmt = select(UserTable).where(UserTable.email == email)
