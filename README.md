@@ -1,6 +1,6 @@
 # Futquiz
 
-Design: https://www.figma.com/design/bf74THL929V4aUCebkVzXZ/App.-Eng-Software?node-id=0-1&t=pr5BtIwzgbrJ7b2X-1
+Design: https://www.figma.com/design/dx0fZXecEh3uSSABIMAKsD/Soccer-Quiz-Design-NOVO?node-id=12-649&m=dev&t=5eBNh1UMcUhohvMA-1
 
 ## 🚀 Como rodar o projeto pela primeira vez
 
@@ -15,14 +15,29 @@ make build
 make up-logs
 ```
 
+## 📚 Documentação da API (Swagger)
 
-## 📱 Interagir com o terminal do frontend
+Acesse a documentação interativa da API em:
+- **URL:** http://localhost:8000/docs
 
-Para interagir com o terminal do frontend (por exemplo, para responder prompts do Expo), abra outro terminal na pasta raiz e dê o seguinte comando:
 
+## 📱 Como rodar o app via Expo Go
+
+1. Certifique-se de que os containers estão rodando:
+```bash
+make up
+```
+
+2. Uma vez no app, escaneie o QRCode ou digite o link, que aparecem no terminal
+
+2. Em outro terminal, execute o comando para interagir com o frontend:
 ```bash
 make attach-frontend
 ```
+
+3. Quando aparecer o prompt do Expo, digite a seta para baixo e selecione a opção **"Proceed Anonymously"**
+
+5. O app será carregado no seu dispositivo
 
 **Importante:** Para sair do terminal de interação sem parar o container, pressione `Ctrl+P` seguido de `Ctrl+Q` (não use `Ctrl+C`, pois isso para todos os containers).
 
