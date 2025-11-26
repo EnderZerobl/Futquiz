@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from shared.database import get_db, create_db_and_tables, engine 
 
@@ -68,6 +69,14 @@ create_db_and_tables(engine)
 app = FastAPI(
     title="Soccer Quiz API (30% MVP)",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.dependency_overrides[IAuthServ] = get_auth_service
