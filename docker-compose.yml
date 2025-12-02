@@ -1,0 +1,53 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: futquiz-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend-db:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - futquiz-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: futquiz-frontend
+    ports:
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+      - "8081:8081"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - FORCE_COLOR=1
+      - HOST_IP=${HOST_IP:-localhost}
+      - EXPO_PUBLIC_API_URL=http://${HOST_IP:-localhost}:8000
+      - REACT_NATIVE_PACKAGER_HOSTNAME=${HOST_IP:-localhost}
+    networks:
+      - futquiz-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    stdin_open: true
+    tty: true
+
+volumes:
+  backend-db:
+
+networks:
+  futquiz-network:
+    driver: bridge
+
