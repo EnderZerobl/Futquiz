@@ -1,7 +1,7 @@
 from typing import Dict
 from fastapi import HTTPException, status
 from auth.interfaces.IAuthService import IAuthService
-from auth.interfaces.IAuthRepository import IAuthRepository # <--- Mudamos para IAuthRepository
+from auth.interfaces.IAuthRepository import IAuthRepository
 from shared.security import verify_password, create_access_token
 
 class AuthService(IAuthService):

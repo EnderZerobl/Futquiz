@@ -1,11 +1,10 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from fastapi.security import OAuth2PasswordBearer # <--- Import necessário para pegar o token
+from fastapi.security import OAuth2PasswordBearer 
 from sqlalchemy.orm import Session
 from typing import Dict
 
-# Imports do Projeto
 from shared.database import get_db
-from auth.repository.AuthRepository import AuthRepository # <--- Mudança: Usando AuthRepository
+from auth.repository.AuthRepository import AuthRepository 
 from auth.repository.UserRepository import UserRepository
 from auth.service.AuthService import AuthService
 from auth.service.UserService import UserService
@@ -16,7 +15,6 @@ router = APIRouter(
     tags=["Autenticação"],
 )
 
-# Esquema para extrair o token do header Authorization: Bearer <token>
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def get_auth_service(db: Session = Depends(get_db)):
