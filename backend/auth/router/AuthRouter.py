@@ -1,13 +1,11 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status
 from fastapi.security import OAuth2PasswordBearer 
-from sqlalchemy.orm import Session
-from typing import Dict
 
-from shared.database import get_db
-from auth.repository.AuthRepository import AuthRepository 
-from auth.repository.UserRepository import UserRepository
-from auth.service.AuthService import AuthService
-from auth.service.UserService import UserService
+from auth.dependencies import get_auth_service, get_user_service
+
+from auth.interfaces.IAuthService import IAuthService
+from auth.interfaces.IUserService import IUserService
+
 from auth.schemas.user_schema import UserLogin, PasswordRecoveryRequest, PasswordResetConfirm
 
 router = APIRouter(
@@ -17,16 +15,6 @@ router = APIRouter(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
-def get_auth_service(db: Session = Depends(get_db)):
-    # Agora instanciamos o AuthRepository que tem os métodos de blocklist
-    repo = AuthRepository(db)
-    return AuthService(repo)
-
-def get_user_service(db: Session = Depends(get_db)):
-    repo = UserRepository(db)
-    return UserService(repo)
-
-
 @router.post(
     "/login",
     status_code=status.HTTP_200_OK,
@@ -34,7 +22,7 @@ def get_user_service(db: Session = Depends(get_db)):
 )
 async def login(
     credentials: UserLogin,
-    service: AuthService = Depends(get_auth_service)
+    service: IAuthService = Depends(get_auth_service) # Injeção via Interface
 ):
     token = service.authenticate_user(credentials.model_dump())
     return {"access_token": token, "token_type": "bearer"}
@@ -46,7 +34,7 @@ async def login(
 )
 async def recover_password(
     data: PasswordRecoveryRequest,
-    service: UserService = Depends(get_user_service)
+    service: IUserService = Depends(get_user_service)
 ):
     service.recover_password(data.email)
     return {"message": "Se o e-mail estiver cadastrado, as instruções foram enviadas."}
@@ -58,7 +46,7 @@ async def recover_password(
 )
 async def reset_password(
     data: PasswordResetConfirm,
-    service: UserService = Depends(get_user_service)
+    service: IUserService = Depends(get_user_service)
 ):
     service.reset_password(data.token, data.new_password)
     return {"message": "Senha alterada com sucesso."}
@@ -70,11 +58,7 @@ async def reset_password(
 )
 async def logout(
     token: str = Depends(oauth2_scheme),
-    service: AuthService = Depends(get_auth_service)
+    service: IAuthService = Depends(get_auth_service)
 ):
-    """
-    Recebe o token atual e o adiciona à Blocklist no banco de dados.
-    Isso impede que o token seja usado novamente, mesmo que ainda esteja no prazo de validade.
-    """
     service.logout_user(token)
     return {"message": "Logout realizado com sucesso."}

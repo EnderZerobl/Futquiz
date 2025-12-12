@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Any
 
 class IAuthService(ABC):
         
@@ -13,4 +13,8 @@ class IAuthService(ABC):
 
     @abstractmethod
     def verify_token_status(self, token: str) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_user_from_token(self, token: str) -> Any:
         raise NotImplementedError
