@@ -10,14 +10,18 @@ from questions.repository.PerguntaRepository import PerguntaRepository
 from questions.interfaces.IPerguntaService import IPerguntaService
 from questions.service.PerguntaService import PerguntaService
 
-# --- Imports de Auth ---
+# --- Imports de Auth e Users ---
 from auth.router.AuthRouter import router as auth_router
-from auth.interfaces.IAuthRepository import IAuthRepository as IAuthRepo
-from auth.repository.AuthRepository import AuthRepository
-from auth.interfaces.IAuthService import IAuthService as IAuthServ
-from auth.service.AuthService import AuthService
-from auth.router.UserRouter import router as user_router 
 from auth.router.UserRouter import router as user_router
+
+from auth.interfaces.IAuthService import IAuthService
+from auth.service.AuthService import AuthService
+
+# Imports do Repositório de Auth (NOVO)
+from auth.interfaces.IAuthRepository import IAuthRepository
+from auth.repository.AuthRepository import AuthRepository
+
+# Imports do Repositório de User
 from auth.interfaces.IUserRepository import IUserRepository
 from auth.repository.UserRepository import UserRepository
 from auth.interfaces.IUserService import IUserService
@@ -30,16 +34,9 @@ from admin.interfaces.IAdminService import IAdminService
 from admin.repository.admin_repository import AdminRepository
 from admin.service.admin_service import AdminService
 
-from auth.model import User 
+# --- Factories (Injeção de Dependência) ---
 
-def get_auth_repository(db: Session = Depends(get_db)) -> IAuthRepo:
-    return AuthRepository(session=db)
-
-def get_auth_service(
-    repository: IAuthRepo = Depends(get_auth_repository)
-) -> IAuthServ:
-    return AuthService(repository=repository)
-
+# 1. User Dependencies (Para CRUD de Usuários)
 def get_user_repository(db: Session = Depends(get_db)) -> IUserRepository:
     return UserRepository(session=db)
 
@@ -48,6 +45,17 @@ def get_user_service(
 ) -> IUserService:
     return UserService(repository=repository)
 
+# 2. Auth Dependencies (ATUALIZADO PARA LOGOUT)
+# Agora precisamos do AuthRepository que lida com a Blocklist
+def get_auth_repository(db: Session = Depends(get_db)) -> IAuthRepository:
+    return AuthRepository(session=db)
+
+def get_auth_service(
+    repository: IAuthRepository = Depends(get_auth_repository)
+) -> IAuthService:
+    return AuthService(repository=repository)
+
+# 3. Questions Dependencies
 def get_pergunta_repository(db: Session = Depends(get_db)) -> IPerguntaRepository:
     return PerguntaRepository(db=db)
 
@@ -56,6 +64,7 @@ def get_pergunta_service(
 ) -> IPerguntaService:
     return PerguntaService(repository=repository)
 
+# 4. Admin Dependencies
 def get_admin_repository(db: Session = Depends(get_db)) -> IAdminRepository:
     return AdminRepository(db)
 
@@ -64,10 +73,13 @@ def get_admin_service(
 ) -> IAdminService:
     return AdminService(repository=repo)
 
+
+# --- Inicialização do Banco ---
+# Isso vai criar a tabela 'token_blocklist' automaticamente
 create_db_and_tables(engine)
 
 app = FastAPI(
-    title="Soccer Quiz API (30% MVP)",
+    title="Soccer Quiz API (MVP)",
     version="1.0.0",
 )
 
@@ -79,19 +91,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.dependency_overrides[IAuthServ] = get_auth_service
-app.dependency_overrides[IUserService] = get_user_service
-app.dependency_overrides[IAuthRepo] = get_auth_repository
-app.dependency_overrides[IUserRepository] = get_user_repository
-app.dependency_overrides[IPerguntaService] = get_pergunta_service
-app.dependency_overrides[IPerguntaRepository] = get_pergunta_repository
+# Auth Overrides
+app.dependency_overrides[IAuthRepository] = get_auth_repository
+app.dependency_overrides[IAuthService] = get_auth_service
 
-# Overrides do Admin
+# User Overrides
+app.dependency_overrides[IUserRepository] = get_user_repository
+app.dependency_overrides[IUserService] = get_user_service
+
+# Perguntas Overrides
+app.dependency_overrides[IPerguntaRepository] = get_pergunta_repository
+app.dependency_overrides[IPerguntaService] = get_pergunta_service
+
+# Admin Overrides
 app.dependency_overrides[IAdminRepository] = get_admin_repository
 app.dependency_overrides[IAdminService] = get_admin_service
 
 
 # --- ROTAS ---
 app.include_router(auth_router)
+app.include_router(user_router) 
 app.include_router(pergunta_router)
 app.include_router(admin_router)
