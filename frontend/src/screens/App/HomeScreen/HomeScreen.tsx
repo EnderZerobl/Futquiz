@@ -56,7 +56,7 @@ export default function HomeScreen() {
         />
       </View>
 
-      <FooterNavigation />
+      <FooterNavigation role="ADMIN" />
     </View>
   )
 }

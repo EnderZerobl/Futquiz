@@ -8,4 +8,5 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   HomeScreen: undefined;
+  AdminCreate: undefined;
 };
