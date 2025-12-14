@@ -3,8 +3,15 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import FooterNavigation from "../../../components/FooterNavigation";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AppStackParamList } from "../../../navigation/types";
 
-const AdminCreateScreen = () => {
+type NavigationProps = StackNavigationProp<AppStackParamList, "AdminCreate">;
+
+export default function AdminCreateScreen() {
+  const navigation = useNavigation<NavigationProps>();
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>      
@@ -21,12 +28,12 @@ const AdminCreateScreen = () => {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("CadastrarTime")}>
             <Text style={styles.cardTag}>INSERÇÃO</Text>
             <Text style={styles.cardTitle}>Cadastrar Time</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.card}>
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("CadastrarPergunta")}>
             <Text style={styles.cardTag}>INSERÇÃO</Text>
             <Text style={styles.cardTitle}>Cadastrar Pergunta/Resposta</Text>
           </TouchableOpacity>
@@ -38,5 +45,3 @@ const AdminCreateScreen = () => {
 
   );
 };
-
-export default AdminCreateScreen;
