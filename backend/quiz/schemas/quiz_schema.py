@@ -15,3 +15,6 @@ class QuizViewModel(BaseModel):
     tempo_por_questao_segundos: int
     total_perguntas: int
     valor_recompensa: Optional[float] = None
+
+    class Config:
+        from_attributes = True

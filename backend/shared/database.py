@@ -2,7 +2,19 @@ from sqlalchemy import create_engine, Column, Integer, String, Date, Boolean, Te
 from sqlalchemy.orm import sessionmaker, declarative_base, Session
 import json
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./futquiz.db"
+import os
+
+# Pega o diretório absoluto onde este arquivo (database.py) está: .../backend/shared
+DIR_ATUAL = os.path.dirname(os.path.abspath(__file__))
+
+# Sobe um nível para chegar na raiz do projeto: .../backend
+DIR_RAIZ = os.path.dirname(DIR_ATUAL)
+
+# Monta o caminho final: .../backend/futquiz.db
+CAMINHO_DB = os.path.join(DIR_RAIZ, "futquiz.db")
+
+# Cria a URL usando o caminho absoluto
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{CAMINHO_DB}"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
@@ -30,10 +42,26 @@ class PerguntaTable(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     texto = Column(String, nullable=False)
+    
+    # Coluna real no banco (String)
     opcoes_json = Column("opcoes", String, nullable=False)
+    
     indice_opcao_correta = Column(Integer, nullable=False)
     tempo_quiz_segundos = Column(Integer, nullable=False)
 
+    # --- Mágica para converter JSON <-> Lista ---
+    @property
+    def opcoes(self):
+        """Retorna a lista de strings ao acessar .opcoes"""
+        if self.opcoes_json:
+            return json.loads(self.opcoes_json)
+        return []
+
+    @opcoes.setter
+    def opcoes(self, value: list):
+        """Salva como string JSON ao definir .opcoes = [...]"""
+        self.opcoes_json = json.dumps(value)
+                
 class QuizResultTable(Base):
     __tablename__ = 'quiz_results'
     
