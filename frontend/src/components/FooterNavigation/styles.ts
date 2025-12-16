@@ -16,5 +16,19 @@ export default StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-around"
-  }
+  },
+  fabContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: "#0AAD60",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: -30, // sobe o botão (efeito flutuante)
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+  }  
 })
