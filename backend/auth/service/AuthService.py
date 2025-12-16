@@ -1,75 +1,68 @@
+from typing import Dict, Any
+from fastapi import HTTPException, status
+from jose import JWTError, jwt
+
 from auth.interfaces.IAuthService import IAuthService
 from auth.interfaces.IAuthRepository import IAuthRepository
-from auth.schemas.user_schema import UserInput, UserView, UserEntity
-from fastapi import HTTPException, status, Depends
-from typing import Dict, Optional
-from shared.security import get_password_hash, verify_password, create_access_token, decode_access_token, oauth2_scheme 
-from datetime import date, timedelta
-from shared.database import UserTable, get_db
-from sqlalchemy.orm import Session
-from sqlalchemy.future import select
+from auth.interfaces.IUserRepository import IUserRepository
+from shared.security import verify_password, create_access_token, SECRET_KEY, ALGORITHM
 
 class AuthService(IAuthService):
 
-    def __init__(self, repository: IAuthRepository):
-        self.repository = repository
-
-    def register_user(self, user_input: UserInput) -> UserView:
-        age_limit = date.today() - timedelta(days=18*365.25)
-        if user_input.birth_date > age_limit:
-             raise ValueError("Você deve ter no mínimo 18 anos para se cadastrar.")
-             
-        if len(user_input.password.encode('utf-8')) > 72:
-            raise ValueError("A senha não pode exceder 72 caracteres.")
-        if len(user_input.password) < 8:
-            raise ValueError("A senha deve ter pelo menos 8 caracteres.")
-        
-        user_data = {
-            "email": user_input.email,
-            "password_hash": get_password_hash(user_input.password),
-            "name": user_input.name,
-            "last_name": user_input.last_name,
-            "cpf": user_input.cpf,
-            "birth_date": user_input.birth_date,
-            "is_admin": user_input.is_admin
-        }
-        
-        try:
-            new_user = self.repository.create_user(user_data)
-            return new_user
-        except ValueError as e:
-             raise HTTPException(status.HTTP_409_CONFLICT, detail=str(e))
+    def __init__(self, auth_repository: IAuthRepository, user_repository: IUserRepository):
+        self.auth_repository = auth_repository
+        self.user_repository = user_repository
 
     def authenticate_user(self, credentials: Dict) -> str:
-        user_entity: Optional[UserEntity] = self.repository.find_by_email(credentials['email'])
+        user = self.user_repository.get_user_by_email(credentials['email'])
         
-        if not user_entity:
+        if not user:
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
             
-        if not verify_password(credentials['password'], user_entity.password_hash):
+        if not verify_password(credentials['password'], user.password_hash):
             raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Credenciais inválidas")
             
-        access_token = create_access_token(data={"sub": user_entity.email, "user_id": user_entity.id, "is_admin": user_entity.is_admin})
+        access_token = create_access_token(data={
+            "sub": user.email, 
+            "user_id": user.id, 
+            "is_admin": user.is_admin
+        })
+        
         return access_token
 
-def get_current_admin(
-    token: str = Depends(oauth2_scheme), 
-    session: Session = Depends(get_db)  
-) -> UserView:
-    payload = decode_access_token(token)
-    user_email: str = payload.get("sub")
-    
-    if user_email is None:
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, detail="Token sem dados de usuário.")
-    
-    user_db = session.execute(
-        select(UserTable).where(UserTable.email == user_email)
-    ).scalars().first()
-    
-    if not user_db:
-        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Usuário não encontrado.")
+    def logout_user(self, token: str) -> None:
+        self.auth_repository.add_token_to_blocklist(token)
 
-    if not user_db.is_admin:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, detail="Acesso negado. Requer privilégios de administrador.")
-    
-    return UserView.model_validate(user_db)
+    def verify_token_status(self, token: str) -> None:
+        if self.auth_repository.is_token_blocked(token):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Sessão finalizada. Faça login novamente.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+    def get_user_from_token(self, token: str) -> Any:
+        """
+        Centraliza a lógica de validação de token e recuperação de usuário.
+        """
+        self.verify_token_status(token)
+
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido, expirado ou usuário não encontrado.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            email: str = payload.get("sub")
+            if email is None:
+                raise credentials_exception
+        except JWTError:
+            raise credentials_exception
+        user = self.user_repository.get_user_by_email(email)
+
+        if user is None:
+            raise credentials_exception
+
+        return user

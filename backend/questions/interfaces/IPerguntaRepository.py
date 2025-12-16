@@ -12,3 +12,7 @@ class IPerguntaRepository(ABC):
     @abstractmethod
     def listar_perguntas(self) -> List[PerguntaViewModel]:
         raise NotImplementedError
+    
+    @abstractmethod
+    def list_perguntas_by_tags(self, tags: List[str]) -> List[PerguntaViewModel]:
+        pass

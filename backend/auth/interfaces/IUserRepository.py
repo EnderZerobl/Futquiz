@@ -1,18 +1,25 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Dict
-from auth.schemas.user_schema import UserView
+from typing import List, Optional, Dict, Any
 
 class IUserRepository(ABC):
     @abstractmethod
-    def list_all_users(self) -> List[UserView]:
+    def list_all_users(self) -> List[Any]:
         raise NotImplementedError
 
     @abstractmethod
-    def create_user(self, user_data: Dict) -> Optional[UserView]:
+    def get_user_by_email(self, email: str) -> Any:
         raise NotImplementedError
 
     @abstractmethod
-    def update_user(self, user_id: int, update_data: Dict) -> Optional[UserView]:
+    def get_user_by_id(self, user_id: int) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def create_user(self, user_data: Dict) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def update_user(self, user_id: int, update_data: Dict) -> Any:
         raise NotImplementedError
 
     @abstractmethod
