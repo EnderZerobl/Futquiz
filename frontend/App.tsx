@@ -30,6 +30,9 @@ const App = () => {
         <AppContent />
       </AuthProvider>
     </SafeAreaProvider>
+    // <NavigationContainer>
+    //   <AppNavigator />
+    // </NavigationContainer>
   );
 };
 
