@@ -1,6 +1,14 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/App/HomeScreen/HomeScreen';
+import AdminCreateScreen from '../screens/Admin/Create/AdminCreateScreen';
+import CadastrarTimeScreen from '../screens/Admin/CadastrarTime/CadastrarTimeScreen';
+import CadastrarPerguntaScreen from '../screens/Admin/CadastrarPergunta/CadastrarPerguntaScreen';
+import CriarQuizStepOneScreen from '../screens/Admin/CriarQuiz/CriarQuizStepOneScreen';
+import CriarQuizStepTwoScreen from '../screens/Admin/CriarQuiz/CriarQuizStepTwoScreen';
+import QuizWaitingRoomScreen from '../screens/App/Quiz/QuizWaitingRoom/QuizWaitingRoomScreen';
+import QuizCountdownScreen from '../screens/App/Quiz/QuizCountdown/QuizCountdownScreen';
+import QuizQuestionScreen from '../screens/App/Quiz/QuizQuestion/QuizQuestionScreen';
 import { AppStackParamList } from './types';
 
 const Stack = createStackNavigator<AppStackParamList>();
@@ -14,6 +22,14 @@ export default function AppNavigator() {
       }}
     >
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="AdminCreate" component={AdminCreateScreen} />
+      <Stack.Screen name="CadastrarTime" component={CadastrarTimeScreen} />
+      <Stack.Screen name="CadastrarPergunta" component={CadastrarPerguntaScreen} />
+      <Stack.Screen name="CriarQuizStepOne" component={CriarQuizStepOneScreen} />
+      <Stack.Screen name="CriarQuizStepTwo" component={CriarQuizStepTwoScreen} />
+      <Stack.Screen name="QuizWaitingRoom" component={QuizWaitingRoomScreen} />
+      <Stack.Screen name="QuizCountdown" component={QuizCountdownScreen} />
+      <Stack.Screen name="QuizQuestion" component={QuizQuestionScreen} />
     </Stack.Navigator>
   );
 }

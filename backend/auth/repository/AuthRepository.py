@@ -1,11 +1,13 @@
 from typing import Optional, Dict
-from auth.interfaces.IAuthRepository import IAuthRepository
-from auth.schemas.user_schema import UserEntity, UserView
-from shared.database import UserTable 
-from sqlalchemy.future import select 
-from sqlalchemy.orm import Session 
+from sqlalchemy.future import select
+from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
+
+from auth.interfaces.IAuthRepository import IAuthRepository
+from auth.schemas.user_schema import UserEntity, UserView
+from shared.database import UserTable
+from auth.model import TokenBlocklist
 
 class AuthRepository(IAuthRepository):
 
@@ -36,3 +38,19 @@ class AuthRepository(IAuthRepository):
             return None
         except Exception as e:
             raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro interno ao buscar dados.")
+
+    def add_token_to_blocklist(self, token: str) -> None:
+        """Adiciona um token à lista de bloqueio (Logout)."""
+        try:
+            blocked_token = TokenBlocklist(token=token)
+            self.session.add(blocked_token)
+            self.session.commit()
+        except IntegrityError:
+            self.session.rollback()
+            pass
+
+    def is_token_blocked(self, token: str) -> bool:
+        """Verifica se o token está na lista de bloqueio."""
+        stmt = select(TokenBlocklist).where(TokenBlocklist.token == token)
+        result = self.session.execute(stmt)
+        return result.scalars().first() is not None

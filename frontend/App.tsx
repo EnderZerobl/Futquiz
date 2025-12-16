@@ -23,6 +23,7 @@ const AppContent = () => {
   );
 };
 
+
 const App = () => {
   return (
     <SafeAreaProvider>

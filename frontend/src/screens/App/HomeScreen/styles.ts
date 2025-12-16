@@ -43,5 +43,17 @@ export default StyleSheet.create({
   filterLabel: {
     color: "#fff",
     fontSize: 16,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 40,
+  },
+  emptyText: {
+    color: "#E8FFF3",
+    fontSize: 16,
+    opacity: 0.7,
   }
 })
