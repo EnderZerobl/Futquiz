@@ -73,9 +73,20 @@ export default function CadastrarTimeScreen() {
 
             <Text style={styles.label}>Ano de Fundação</Text>
             <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            onChangeText={(v) => handleChange("foundationYear", v)}
+                style={styles.input}
+                keyboardType="numeric"
+                value={team.foundationYear}
+                // onChangeText={(v) => handleChange("foundationYear", v)}
+                onChangeText={(text) => {
+                    const cleaned = text.replace(/\D/g, "");
+                    let formatted = cleaned;
+                    if (cleaned.length >= 3)
+                        formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+                    if (cleaned.length >= 5)
+                        formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+                    handleChange("foundationYear", formatted)
+                    // setFoundationYear(formatted);
+                }}
             />
 
             <Text style={styles.label}>Estádio</Text>

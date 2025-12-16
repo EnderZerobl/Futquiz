@@ -3,21 +3,33 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 
-const QuizCard = ({ item, expanded, onPress }: any) => {
+type Props = {
+  title: string,
+  description: string,
+  teamName?: string,
+  badge?: string;
+  expanded: boolean;
+  onPress: () => void;
+}
+
+const QuizCard = ({ title, description, teamName, badge, expanded, onPress }: Props) => {
   if (expanded) {
     return (
       <TouchableOpacity style={styles.quizCardExpanded} onPress={onPress} activeOpacity={0.9}>
         <View style={styles.expandedTopSection}>
-          <Image 
-            source={item.image} 
-            style={styles.expandedImage}
-            resizeMode="contain"
-          />
+          {badge && 
+            <Image 
+              source={{ uri: badge }} 
+              // style={styles.badge}
+              // resizeMode="contain"
+              resizeMode="stretch"
+            />
+          }          
         </View>
 
         <View style={styles.expandedBottomSection}>
-          <Text style={styles.expandedTitle}>{item.title}</Text>
-          <Text style={styles.expandedDescription}>{item.description}</Text>
+          <Text style={styles.expandedTitle}>{title}</Text>
+          <Text style={styles.expandedDescription}>{description}</Text>
           
           <TouchableOpacity style={styles.buttonStart} onPress={(e) => e.stopPropagation()}>
             <Ionicons name="play" size={20} color="#fff" />
@@ -32,7 +44,7 @@ const QuizCard = ({ item, expanded, onPress }: any) => {
     <TouchableOpacity style={styles.quizCard} onPress={onPress} activeOpacity={0.9}>
       <View style={styles.imageContainer}>
         <Image 
-          source={ item.image } 
+          source={{ uri: badge }}
           style={styles.quizImage}
           resizeMode="contain"
         />
@@ -40,22 +52,25 @@ const QuizCard = ({ item, expanded, onPress }: any) => {
 
       <View style={styles.contentContainer}>
         <View style={styles.contentTop}>
-          <Text style={styles.quizTitle}>{item.title}</Text>
+          <Text style={styles.quizTitle}>{title}</Text>
 
           <Text style={styles.quizDescription} numberOfLines={2}>
-            {item.description}
+            {description}
           </Text>
         </View>
 
-        <View style={styles.tagContainer}>
-          <Ionicons name="close-circle" size={16} color="#fff" />
-          <Image 
-            source={item.image} 
-            style={styles.tagImage}
-            resizeMode="contain"
-          />
-          <Text style={styles.quizTag}>{item.tag}</Text>
-        </View>
+        {teamName && (
+          <View style={styles.tagContainer}>
+            <Ionicons name="close-circle" size={16} color="#fff" />
+            <Image 
+              source={{ uri: badge }} 
+              style={styles.tagImage}
+              resizeMode="contain"
+            />
+            <Text style={styles.quizTag}>{teamName}</Text>
+          </View>
+        )}
+        
       </View>
     </TouchableOpacity>
   )

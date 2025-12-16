@@ -3,8 +3,15 @@ import { View, Text, Animated, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import arrowLeftCircle from "../../../assets/icons/Arrow left-circle.png";
+import { Team } from "../../types/Team";
 
-const FilterSidebar = ({ visible, onClose }: { visible: boolean; onClose: () => void }) => {
+type Props = {
+  visible: boolean;
+  onClose: () => void;
+  teams: Team[];
+};
+
+const FilterSidebar = ({ visible, onClose, teams }: Props) => {
   const left = visible ? 0 : -200;
 
   return (
@@ -18,20 +25,17 @@ const FilterSidebar = ({ visible, onClose }: { visible: boolean; onClose: () => 
       
       <Text style={styles.sidebarTitle}>Filtrar:</Text>
 
-      <View style={styles.filterItem}>
-        <Ionicons name="football" size={16} color="#fff" />
-        <Text style={styles.filterText}>Esporte Clube Vitória</Text>
-      </View>
-
-      <View style={styles.filterItem}>
-        <Ionicons name="flame" size={16} color="#fff" />
-        <Text style={styles.filterText}>Flamengo</Text>
-      </View>
-
-      <View style={styles.filterItem}>
-        <Ionicons name="shield" size={16} color="#fff" />
-        <Text style={styles.filterText}>Corinthians</Text>
-      </View>
+      {teams.length === 0 ? (
+        <Text>
+          Nenhuma tag cadastrada
+        </Text>
+      ) : (
+        teams.map((team) => (
+          <TouchableOpacity key={team.id} style={styles.tagItem}>
+            <Text style={styles.tagText}>{team.name}</Text>
+          </TouchableOpacity>
+        ))
+      )}
     </Animated.View>
   )
 }

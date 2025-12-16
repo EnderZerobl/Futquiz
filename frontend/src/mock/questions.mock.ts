@@ -1,22 +1,17 @@
-export type Question = {
-    id: string;
-    question: string;
-    options: string[];
-    tags: string[];
-};
+import { Question } from "../types/Question";
 
-export const questions: Question[] = [];
+export const questionsMock: Question[] = [];
 
 export const addQuestion = (data: Omit<Question, "id">) => {
-const newQuestion: Question = {
+  const newQuestion: Question = {
     id: Date.now().toString(),
     ...data,
+  };
+
+  questionsMock.push(newQuestion);
+
+  console.log("Pergunta cadastrada:", newQuestion);
+  console.log("Lista de perguntas:", questionsMock);
 };
 
-questions.push(newQuestion);
-
-console.log("Pergunta cadastrada:", newQuestion);
-console.log("Lista de perguntas:", questions);
-};
-
-export const getQuestions = () => questions;  
+export const getQuestions = () => questionsMock;

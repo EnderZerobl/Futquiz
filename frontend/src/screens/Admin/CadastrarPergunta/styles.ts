@@ -93,4 +93,19 @@ export default StyleSheet.create({
     color: "#fff",
     fontWeight: "bold",
   },
+  optionLabel: {
+    color: "#94A3B8",
+    fontSize: 12,
+    marginBottom: 6,
+  },
+  correctOption: {
+    borderColor: "#22C55E",
+    backgroundColor: "#052E16",
+  },
+  correctText: {
+    marginTop: 6,
+    color: "#22C55E",
+    fontSize: 12,
+    fontWeight: "600",
+  },
 });
