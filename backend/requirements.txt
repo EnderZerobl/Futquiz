@@ -10,3 +10,4 @@ python-multipart
 bcrypt==5.0.0
 typing-extensions==4.15.0
 argon2-cffi==23.1.0
+firebase-admin==6.6.0

@@ -15,5 +15,4 @@ venv/
 # Ignorar arquivos de log
 *.log
 
-
-fix_admin.py
+firebase_credentials.json

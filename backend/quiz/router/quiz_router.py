@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, WebSocket, WebSocketDisconnect
 from typing import List
 from sqlalchemy.orm import Session
 from shared.database import get_db
@@ -14,25 +14,68 @@ router = APIRouter(
     prefix="/quiz",
     tags=["Quiz"]
 )
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in self.active_connections:
+            try:
+                await connection.send_json(message)
+            except Exception:
+                self.disconnect(connection)
+
+socket_manager = ConnectionManager()
+
+
 def get_quiz_service(db: Session = Depends(get_db)):
     quiz_repo = QuizRepository(db)
     team_repo = TeamRepository(db)
     team_service = TeamService(repository=team_repo)
     
-    return QuizService(repository=quiz_repo, team_service=team_service)
+    return QuizService(
+        repository=quiz_repo, 
+        team_service=team_service,
+        socket_manager=socket_manager 
+    )
+
+@router.websocket("/ws/notifications")
+async def websocket_endpoint(websocket: WebSocket):
+    """
+    Endpoint para clientes (Frontend/Mobile) escutarem notificações de novos quizzes.
+    """
+    await socket_manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        socket_manager.disconnect(websocket)
+
 
 @router.post("/create", response_model=QuizViewModel, status_code=status.HTTP_201_CREATED)
-def create_quiz(
+async def create_quiz(
     quiz_data: QuizInputModel,
     quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
-        return quiz_service.create_quiz(quiz_data)
+        # Adicionado o AWAIT aqui, pois o service agora é async
+        return await quiz_service.create_quiz(quiz_data) 
     except HTTPException as e:
         raise e
-    except Exception:
+    except Exception as e:
+        print(f"Erro: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro ao criar quiz.")
+
 
 @router.get("/list", response_model=List[QuizViewModel])
 def list_quizzes(quiz_service: QuizService = Depends(get_quiz_service)):
@@ -112,12 +155,12 @@ def get_quiz_metrics_by_id(
     status_code=status.HTTP_200_OK,
     summary="Dispara notificação push sobre novo quiz (RESTRITO A ADMIN)."
 )
-def notify_new_quiz(
+async def notify_new_quiz(
     quiz_id: int,
     quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
-        return quiz_service.trigger_new_quiz_notification(quiz_id)
+        return await quiz_service.trigger_new_quiz_notification(quiz_id)
     except HTTPException as e:
         raise e

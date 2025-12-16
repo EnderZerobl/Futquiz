@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste WebSocket Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        #messages { border: 1px solid #ddd; padding: 10px; height: 300px; overflow-y: scroll; background: #f9f9f9; }
+        .event { color: green; font-weight: bold; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>Monitor de Notificações (WebSocket)</h2>
+    <p>Status: <span id="status">Desconectado</span></p>
+    <div id="messages"></div>
+
+    <script>
+        // Ajuste a URL se sua porta for diferente de 8000
+        const ws = new WebSocket("ws://localhost:8001/quiz/ws/notifications");
+        const statusSpan = document.getElementById("status");
+        const msgDiv = document.getElementById("messages");
+
+        function log(message, type="") {
+            const p = document.createElement("p");
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            if (type) p.className = type;
+            msgDiv.appendChild(p);
+            msgDiv.scrollTop = msgDiv.scrollHeight; // Auto-scroll
+        }
+
+        ws.onopen = function() {
+            statusSpan.textContent = "Conectado";
+            statusSpan.style.color = "green";
+            log("Conexão WebSocket estabelecida.", "event");
+        };
+
+        ws.onmessage = function(event) {
+            log("Mensagem recebida: " + event.data, "event");
+            try {
+                const data = JSON.parse(event.data);
+                if (data.event === "NEW_QUIZ_AVAILABLE") {
+                    alert("🔔 " + data.message);
+                }
+            } catch (e) {
+                console.error("Erro ao parsear JSON", e);
+            }
+        };
+
+        ws.onclose = function() {
+            statusSpan.textContent = "Desconectado";
+            statusSpan.style.color = "red";
+            log("Conexão fechada.");
+        };
+
+        ws.onerror = function(error) {
+            log("Erro na conexão WebSocket.", "error");
+        };
+    </script>
+</body>
+</html>

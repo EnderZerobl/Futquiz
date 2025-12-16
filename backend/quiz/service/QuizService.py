@@ -5,16 +5,21 @@ from shared.database import QuizResultTable, UserTable
 from quiz.schemas.metrics_schema import QuizMetricsViewModel, GlobalRankingViewModel
 from sqlalchemy import func, desc
 from fastapi import HTTPException, status
-from typing import List
+from typing import List, Any
+
+# Importamos o serviço de Push Notification
+from shared.notification_service import send_topic_push
 
 class QuizService:
     def __init__(self, 
                  repository: IQuizRepository,
-                 team_service: TeamService): 
+                 team_service: TeamService,
+                 socket_manager: Any = None): # Injeção do Gerenciador de WebSocket
         self._repository = repository
         self._team_service = team_service
+        self.socket_manager = socket_manager
 
-    def create_quiz(self, quiz_data: QuizInputModel) -> QuizViewModel:
+    async def create_quiz(self, quiz_data: QuizInputModel) -> QuizViewModel:
         if not quiz_data.pergunta_ids:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -27,10 +32,39 @@ class QuizService:
                 detail="Recompensa mínima é de R$ 5,00."
             )
             
-        return self._repository.create_quiz(quiz_data)
+        # 1. Cria o quiz no Banco (retorna objeto do banco)
+        created_quiz = self._repository.create_quiz(quiz_data)
+        
+        # 2. Dispara as notificações (WebSocket + Firebase)
+        await self.trigger_new_quiz_notification(created_quiz.id)
+        
+        # 3. Converte MANUALMENTE do Banco para o Schema de Resposta (A CORREÇÃO ESTÁ AQUI)
+        return QuizViewModel(
+            id=created_quiz.id,
+            nome_quiz=created_quiz.nome_quiz,
+            tema=created_quiz.tema,
+            tempo_por_questao_segundos=created_quiz.tempo_por_questao_segundos,
+            total_perguntas=len(quiz_data.pergunta_ids),
+            valor_recompensa=created_quiz.valor_recompensa
+        )
 
     def list_available_quizzes(self) -> List[QuizViewModel]:
-        return self._repository.list_available_quizzes()
+        quizzes_db = self._repository.list_available_quizzes()
+        # Precisamos converter a lista também, caso o repository retorne objetos do banco
+        # Se o seu repository já retorna QuizViewModel, isso aqui pode ser simplificado
+        # Mas assumindo que ele retorna objetos do banco:
+        return [
+            QuizViewModel(
+                id=q.id,
+                nome_quiz=q.nome_quiz,
+                tema=q.tema,
+                tempo_por_questao_segundos=q.tempo_por_questao_segundos,
+                # Se o objeto do banco não tiver a lista de perguntas carregada, 
+                # pode ser necessário ajustar o count abaixo ou garantir o load no repo
+                total_perguntas=len(q.perguntas) if hasattr(q, "perguntas") else 0,
+                valor_recompensa=q.valor_recompensa
+            ) for q in quizzes_db
+        ]
     
     def start_quiz_session(self, quiz_id: int, user_id: int):
         details = self._repository.get_quiz_details(quiz_id)
@@ -108,12 +142,59 @@ class QuizService:
             fastest_player=fastest_result
         )
 
-    def trigger_new_quiz_notification(self, quiz_id: int) -> dict:
+    async def trigger_new_quiz_notification(self, quiz_id: int) -> dict:
+        """
+        Dispara notificações híbridas:
+        1. WebSocket (Para usuários com App Aberto)
+        2. Firebase Cloud Messaging (Para usuários com App Fechado)
+        """
         quiz_details = self._repository.get_quiz_details(quiz_id)
         if not quiz_details:
              raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Quiz não encontrado para notificação.")
         
+        print(f"LOG: Iniciando fluxo de notificação para '{quiz_details.nome_quiz}'...")
+        
+        logs = []
+
+        # --- 1. WebSocket Notification (App Aberto) ---
+        if self.socket_manager:
+            message_payload = {
+                "event": "NEW_QUIZ_AVAILABLE",
+                "data": {
+                    "quiz_id": quiz_id,
+                    "title": quiz_details.nome_quiz,
+                    "reward": quiz_details.valor_recompensa
+                },
+                "message": f"Novo quiz disponível: {quiz_details.nome_quiz}!"
+            }
+            await self.socket_manager.broadcast(message_payload)
+            logs.append("WebSocket Broadcast enviado.")
+        else:
+            logs.append("WebSocket ignorado (sem manager).")
+
+        # --- 2. Firebase Push Notification (App Fechado) ---
+        try:
+            push_title = "Novo Quiz Disponível! ⚽"
+            push_body = f"O quiz '{quiz_details.nome_quiz}' já está no ar. Venha jogar e ganhar pontos!"
+            
+            # Dados extras
+            push_data = {
+                "click_action": "NOTIFICATION_CLICK", 
+                "screen": "quiz_details",
+                "quiz_id": str(quiz_id)
+            }
+            
+            send_topic_push(
+                topic="new_quizzes", 
+                title=push_title, 
+                body=push_body, 
+                data=push_data
+            )
+            logs.append("Push Notification enviado ao Firebase.")
+        except Exception as e:
+            logs.append(f"Erro ao enviar Push: {str(e)}")
+        
         return {
-            "status": "Notification Dispatched",
-            "message": f"Notificação para o quiz '{quiz_details.nome_quiz}' (ID: {quiz_id}) disparada com sucesso."
+            "status": "Processado",
+            "logs": logs
         }
