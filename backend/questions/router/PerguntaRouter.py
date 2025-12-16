@@ -7,6 +7,7 @@ from questions.schemas.PerguntaInputModel import PerguntaInputModel
 from questions.schemas.PerguntaViewModel import PerguntaViewModel
 from questions.service.PerguntaService import PerguntaService
 from questions.repository.PerguntaRepository import PerguntaRepository
+from questions.schemas.question_metrics_schema import PerguntaDashboardViewModel 
 
 from auth.dependencies import get_current_admin
 from auth.schemas.user_schema import UserView
@@ -52,3 +53,17 @@ def listar_perguntas(
 ):
     perguntas = service.listar_perguntas()
     return perguntas
+
+
+@router.get(
+    "/dashboard/metrics",
+    response_model = PerguntaDashboardViewModel, 
+    status_code = status.HTTP_200_OK,
+    summary="Dashboard de métricas por questão (RESTRITO A ADMIN)"
+)
+def get_question_dashboard(
+    service: PerguntaService = Depends(get_pergunta_service),
+    current_admin: UserView = Depends(get_current_admin)   
+):
+    """Retorna estatísticas sobre a performance de cada pergunta no quiz."""
+    return service.get_dashboard_metrics()
