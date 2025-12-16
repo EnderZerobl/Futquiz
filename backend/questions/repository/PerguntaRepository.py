@@ -3,6 +3,8 @@ from shared.database import PerguntaTable
 from questions.interfaces.IPerguntaRepository import IPerguntaRepository
 from questions.schemas.PerguntaInputModel import PerguntaInputModel 
 from questions.schemas.PerguntaViewModel import PerguntaViewModel
+from shared.database import PerguntaTable, PerguntaAnswerTable 
+from sqlalchemy import func, case
 from sqlalchemy.orm import Session
 from sqlalchemy import or_ 
 import json
@@ -79,5 +81,22 @@ class PerguntaRepository(IPerguntaRepository):
             ))
             
         return view_models
+    
+    def get_dashboard_metrics(self):
+        """Calcula métricas de performance por pergunta (REQ 12)."""
+        
+        metrics = (
+            self.db.query(
+                PerguntaTable.id.label("pergunta_id"),
+                PerguntaTable.texto,
+                func.count(PerguntaAnswerTable.id).label("total_respostas"),
+                func.sum(case((PerguntaAnswerTable.is_correct == True, 1), else_=0)).label("total_corretas"),
+                func.avg(PerguntaAnswerTable.response_time_ms).label("tempo_medio_resposta_ms")
+            )
+            .join(PerguntaAnswerTable, PerguntaTable.id == PerguntaAnswerTable.pergunta_id)
+            .group_by(PerguntaTable.id, PerguntaTable.texto)
+            .all()
+        )
+        return metrics
     
     

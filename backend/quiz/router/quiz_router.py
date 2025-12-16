@@ -3,6 +3,7 @@ from typing import List
 from quiz.schemas.quiz_schema import QuizInputModel, QuizViewModel
 from quiz.service.QuizService import QuizService
 from auth.dependencies import get_current_admin, get_current_user 
+from quiz.schemas.metrics_schema import GlobalRankingViewModel, QuizMetricsViewModel
 
 router = APIRouter()
 
@@ -63,3 +64,47 @@ def leave_quiz_session(
         return quiz_service.leave_quiz_session(quiz_id, user_id)
     except Exception:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro ao processar saída do quiz.")
+    
+@router.get(
+    "/ranking/global",
+    response_model=List[GlobalRankingViewModel],
+    status_code=status.HTTP_200_OK,
+    summary="Obtém o ranking geral de jogadores (Top 100)."
+)
+def get_global_ranking_players(
+    quiz_service: QuizService = Depends(),
+    user: dict = Depends(get_current_user)
+):
+    return quiz_service.get_global_ranking()
+
+
+@router.get(
+    "/metrics/{quiz_id}",
+    response_model=QuizMetricsViewModel,
+    status_code=status.HTTP_200_OK,
+    summary="Obtém métricas e ranking final de uma partida específica (RESTRITO A ADMIN)."
+)
+def get_quiz_metrics_by_id(
+    quiz_id: int,
+    quiz_service: QuizService = Depends(),
+    admin_user: dict = Depends(get_current_admin)
+):
+    try:
+        return quiz_service.get_quiz_metrics(quiz_id)
+    except HTTPException as e:
+        raise e
+        
+@router.post(
+    "/notify/new/{quiz_id}",
+    status_code=status.HTTP_200_OK,
+    summary="Dispara notificação push sobre novo quiz (RESTRITO A ADMIN)."
+)
+def notify_new_quiz(
+    quiz_id: int,
+    quiz_service: QuizService = Depends(),
+    admin_user: dict = Depends(get_current_admin)
+):
+    try:
+        return quiz_service.trigger_new_quiz_notification(quiz_id)
+    except HTTPException as e:
+        raise e

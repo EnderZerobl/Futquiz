@@ -34,6 +34,19 @@ class PerguntaTable(Base):
     indice_opcao_correta = Column(Integer, nullable=False)
     tempo_quiz_segundos = Column(Integer, nullable=False)
 
+class QuizResultTable(Base):
+    __tablename__ = 'quiz_results'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    quiz_id = Column(Integer, nullable=False, index=True) 
+    user_id = Column(Integer, nullable=False, index=True) 
+    
+    # Dados para Ranking e Métricas
+    total_score = Column(Integer, default=0) 
+    total_time_ms = Column(Integer, default=0) 
+    correct_answers = Column(Integer, default=0)
+    
+    username = Column(String(100), nullable=True)
 
 
 class TeamTable(Base):
@@ -47,6 +60,17 @@ class TeamTable(Base):
     ano_fundacao = Column(Integer)
     estadio = Column(String(100))
     escudo_url = Column(String(255))
+
+class PerguntaAnswerTable(Base):
+    __tablename__ = 'pergunta_answers'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    quiz_id = Column(Integer, nullable=False, index=True)
+    user_id = Column(Integer, nullable=False, index=True)
+    pergunta_id = Column(Integer, nullable=False, index=True)
+    
+    is_correct = Column(Boolean, nullable=False)
+    response_time_ms = Column(Integer, nullable=False)
 
 class QuizTable(Base):
     __tablename__ = 'quizzes'
