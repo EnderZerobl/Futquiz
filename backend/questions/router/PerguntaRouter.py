@@ -1,15 +1,26 @@
 from fastapi import APIRouter, Depends, status, HTTPException
+from sqlalchemy.orm import Session
 from typing import List
+
+from shared.database import get_db
 from questions.schemas.PerguntaInputModel import PerguntaInputModel 
 from questions.schemas.PerguntaViewModel import PerguntaViewModel
-from questions.interfaces.IPerguntaService import IPerguntaService 
-from auth.service.AuthService import get_current_admin
+from questions.service.PerguntaService import PerguntaService
+from questions.repository.PerguntaRepository import PerguntaRepository
+from questions.schemas.question_metrics_schema import PerguntaDashboardViewModel 
+
+from auth.dependencies import get_current_admin
 from auth.schemas.user_schema import UserView
 
 router = APIRouter(
     prefix = "/perguntas",
     tags = ["Perguntas"],
 )
+
+def get_pergunta_service(db: Session = Depends(get_db)):
+    repo = PerguntaRepository(db)
+    return PerguntaService(repo)
+
 
 @router.post(
     "/create",
@@ -19,8 +30,8 @@ router = APIRouter(
 )
 def criar_pergunta(
     dados_pergunta: PerguntaInputModel,
-    service: IPerguntaService = Depends(),
-    current_admin: UserView = Depends(get_current_admin)
+    service: PerguntaService = Depends(get_pergunta_service),
+    current_admin: UserView = Depends(get_current_admin)   
 ):
     try:
         nova_pergunta = service.criar_pergunta(dados_pergunta)
@@ -38,7 +49,21 @@ def criar_pergunta(
     summary = "Lista todas as perguntas ativas"
 )
 def listar_perguntas(
-    service: IPerguntaService = Depends()
+    service: PerguntaService = Depends(get_pergunta_service)
 ):
     perguntas = service.listar_perguntas()
     return perguntas
+
+
+@router.get(
+    "/dashboard/metrics",
+    response_model = PerguntaDashboardViewModel, 
+    status_code = status.HTTP_200_OK,
+    summary="Dashboard de métricas por questão (RESTRITO A ADMIN)"
+)
+def get_question_dashboard(
+    service: PerguntaService = Depends(get_pergunta_service),
+    current_admin: UserView = Depends(get_current_admin)   
+):
+    """Retorna estatísticas sobre a performance de cada pergunta no quiz."""
+    return service.get_dashboard_metrics()

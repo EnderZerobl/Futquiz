@@ -11,3 +11,11 @@ class IAuthRepository(ABC):
     @abstractmethod
     def find_by_email(self, email: str) -> Optional[UserEntity]:
         raise NotImplementedError
+
+    @abstractmethod
+    def add_token_to_blocklist(self, token: str) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_token_blocked(self, token: str) -> bool:
+        raise NotImplementedError
