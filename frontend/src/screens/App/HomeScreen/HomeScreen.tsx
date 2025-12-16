@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import QuizCard from "../../../components/QuizCard";
 import FilterSidebar from "../../../components/FilterSidebar";
 import FooterNavigation from "../../../components/FooterNavigation";
-import { quizListMock } from "../../../mock/quizListMock";
+import { quizListMock } from "../../../mock/quizList.mock";
 
 import styles from "./styles";
 

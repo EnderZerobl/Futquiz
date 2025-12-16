@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { getTeams } from "../../../mock/teams.mock";
+import { addQuestion } from "../../../mock/question.mock";
 
 export default function CadastrarPerguntaScreen() {
   const navigation = useNavigation();
@@ -33,6 +34,21 @@ export default function CadastrarPerguntaScreen() {
     newOptions[index] = value;
     setOptions(newOptions);
   };
+
+  const handleSubmit = () => {
+    if (!question || options.some((opt) => !opt) || selectedTags.length === 0) {
+      console.log("Preencha todos os campos");
+      return;
+    }
+  
+    addQuestion({
+      question,
+      options,
+      tags: selectedTags,
+    });
+  
+    navigation.goBack();
+  };  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -82,7 +98,7 @@ export default function CadastrarPerguntaScreen() {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.submitButton}>
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
         <Text style={styles.submitText}>Finalizar Cadastro</Text>
       </TouchableOpacity>
     </ScrollView>
