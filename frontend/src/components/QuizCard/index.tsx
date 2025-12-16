@@ -2,17 +2,23 @@ import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AppStackParamList } from "../../navigation";
+import { Quiz } from "../../types/Quiz";
+
+type NavigationProps = StackNavigationProp<AppStackParamList>;
 
 type Props = {
-  title: string,
-  description: string,
+  quiz: Quiz,
   teamName?: string,
   badge?: string;
   expanded: boolean;
   onPress: () => void;
 }
 
-const QuizCard = ({ title, description, teamName, badge, expanded, onPress }: Props) => {
+const QuizCard = ({ quiz, teamName, badge, expanded, onPress }: Props) => {
+  const navigation = useNavigation<NavigationProps>(); 
   if (expanded) {
     return (
       <TouchableOpacity style={styles.quizCardExpanded} onPress={onPress} activeOpacity={0.9}>
@@ -28,10 +34,12 @@ const QuizCard = ({ title, description, teamName, badge, expanded, onPress }: Pr
         </View>
 
         <View style={styles.expandedBottomSection}>
-          <Text style={styles.expandedTitle}>{title}</Text>
-          <Text style={styles.expandedDescription}>{description}</Text>
+          <Text style={styles.expandedTitle}>{quiz.name}</Text>
+          <Text style={styles.expandedDescription}>{quiz.description}</Text>
           
-          <TouchableOpacity style={styles.buttonStart} onPress={(e) => e.stopPropagation()}>
+          <TouchableOpacity style={styles.buttonStart} onPress={() => navigation.navigate("QuizWaitingRoom", {
+            quizId: quiz.id,
+          })}>
             <Ionicons name="play" size={20} color="#fff" />
             <Text style={styles.buttonStartText}>Entrar na sala de espera</Text>
           </TouchableOpacity>
@@ -52,10 +60,10 @@ const QuizCard = ({ title, description, teamName, badge, expanded, onPress }: Pr
 
       <View style={styles.contentContainer}>
         <View style={styles.contentTop}>
-          <Text style={styles.quizTitle}>{title}</Text>
+          <Text style={styles.quizTitle}>{quiz.name}</Text>
 
           <Text style={styles.quizDescription} numberOfLines={2}>
-            {description}
+            {quiz.description}
           </Text>
         </View>
 

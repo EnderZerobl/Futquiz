@@ -6,6 +6,9 @@ import CadastrarTimeScreen from '../screens/Admin/CadastrarTime/CadastrarTimeScr
 import CadastrarPerguntaScreen from '../screens/Admin/CadastrarPergunta/CadastrarPerguntaScreen';
 import CriarQuizStepOneScreen from '../screens/Admin/CriarQuiz/CriarQuizStepOneScreen';
 import CriarQuizStepTwoScreen from '../screens/Admin/CriarQuiz/CriarQuizStepTwoScreen';
+import QuizWaitingRoomScreen from '../screens/App/Quiz/QuizWaitingRoom/QuizWaitingRoomScreen';
+import QuizCountdownScreen from '../screens/App/Quiz/QuizCountdown/QuizCountdownScreen';
+import QuizQuestionScreen from '../screens/App/Quiz/QuizQuestion/QuizQuestionScreen';
 import { AppStackParamList } from './types';
 
 const Stack = createStackNavigator<AppStackParamList>();
@@ -24,6 +27,9 @@ export default function AppNavigator() {
       <Stack.Screen name="CadastrarPergunta" component={CadastrarPerguntaScreen} />
       <Stack.Screen name="CriarQuizStepOne" component={CriarQuizStepOneScreen} />
       <Stack.Screen name="CriarQuizStepTwo" component={CriarQuizStepTwoScreen} />
+      <Stack.Screen name="QuizWaitingRoom" component={QuizWaitingRoomScreen} />
+      <Stack.Screen name="QuizCountdown" component={QuizCountdownScreen} />
+      <Stack.Screen name="QuizQuestion" component={QuizQuestionScreen} />
     </Stack.Navigator>
   );
 }

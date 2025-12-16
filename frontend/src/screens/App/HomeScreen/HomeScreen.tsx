@@ -70,8 +70,7 @@ export default function HomeScreen() {
 
               return(
                 <QuizCard
-                  title={item.name}
-                  description={item.description}
+                  quiz={item}
                   teamName={team?.name}
                   badge={team?.badge}
                   expanded={expandedQuizId == item.id}

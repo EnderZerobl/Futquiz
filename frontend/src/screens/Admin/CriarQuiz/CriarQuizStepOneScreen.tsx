@@ -18,11 +18,11 @@ export default function CriarQuizStepOneScreen() {
 
   const handleNext = () => {
     navigation.navigate("CriarQuizStepTwo" as never, {
-      title,
-      description,
-      timePerQuestion,
-      hasReward,
-      teamId: selectedTeamId,
+        title,
+        description,
+        timePerQuestion,
+        hasReward,
+        teamId: selectedTeamId,
     } as never);
   };
 
