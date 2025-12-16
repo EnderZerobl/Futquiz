@@ -8,4 +8,14 @@ export type AuthStackParamList = {
 
 export type AppStackParamList = {
   HomeScreen: undefined;
+  AdminCreate: undefined;
+  CadastrarTime: undefined;
+  CadastrarPergunta: undefined;
+  CriarQuizStepOne: undefined;
+  CriarQuizStepTwo: {
+    hasReward: boolean;
+    title: string;
+    tag: string;
+    timePerQuestion: string;
+  };
 };
