@@ -1,16 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from shared.database import create_db_and_tables, engine 
-
-# Importando os Routers
 from auth.router.AuthRouter import router as auth_router
 from auth.router.UserRouter import router as user_router
 from questions.router.PerguntaRouter import router as pergunta_router
 from admin.router.admin_router import router as admin_router
 from teams.router import team_router
 from quiz.router import quiz_router
-
-# Inicializa o Banco de Dados
 create_db_and_tables(engine)
 
 app = FastAPI(
