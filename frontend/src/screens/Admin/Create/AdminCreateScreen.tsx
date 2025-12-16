@@ -37,6 +37,11 @@ export default function AdminCreateScreen() {
             <Text style={styles.cardTag}>INSERÇÃO</Text>
             <Text style={styles.cardTitle}>Cadastrar Pergunta/Resposta</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("CriarQuizStepOne")}>
+            <Text style={styles.cardTag}>INSERÇÃO</Text>
+            <Text style={styles.cardTitle}>Criar Quiz</Text>
+          </TouchableOpacity>
         </View>
       </View>
       

@@ -11,4 +11,11 @@ export type AppStackParamList = {
   AdminCreate: undefined;
   CadastrarTime: undefined;
   CadastrarPergunta: undefined;
+  CriarQuizStepOne: undefined;
+  CriarQuizStepTwo: {
+    hasReward: boolean;
+    title: string;
+    tag: string;
+    timePerQuestion: string;
+  };
 };

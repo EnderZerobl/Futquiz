@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { getTeams } from "../../../mock/teams.mock";
-import { addQuestion } from "../../../mock/question.mock";
+import { addQuestion } from "../../../mock/questions.mock";
 
 export default function CadastrarPerguntaScreen() {
   const navigation = useNavigation();
