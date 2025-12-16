@@ -9,6 +9,7 @@ import CriarQuizStepTwoScreen from '../screens/Admin/CriarQuiz/CriarQuizStepTwoS
 import QuizWaitingRoomScreen from '../screens/App/Quiz/QuizWaitingRoom/QuizWaitingRoomScreen';
 import QuizCountdownScreen from '../screens/App/Quiz/QuizCountdown/QuizCountdownScreen';
 import QuizQuestionScreen from '../screens/App/Quiz/QuizQuestion/QuizQuestionScreen';
+import QuizResultScreen from '../screens/App/Quiz/QuizResult/QuizResultScreen';
 import { AppStackParamList } from './types';
 
 const Stack = createStackNavigator<AppStackParamList>();
@@ -30,6 +31,7 @@ export default function AppNavigator() {
       <Stack.Screen name="QuizWaitingRoom" component={QuizWaitingRoomScreen} />
       <Stack.Screen name="QuizCountdown" component={QuizCountdownScreen} />
       <Stack.Screen name="QuizQuestion" component={QuizQuestionScreen} />
+      <Stack.Screen name="QuizResult" component={QuizResultScreen} />
     </Stack.Navigator>
   );
 }

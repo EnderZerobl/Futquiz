@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 
@@ -15,11 +15,11 @@ export default function QuizWaitingRoomScreen() {
   const route = useRoute<any>();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>QUIZ GERAL TIMES</Text>
       <Text style={styles.subtitle}>SALA DE ESPERA</Text>
 
-      <Text style={styles.timer}>Inicia em 00:18</Text>
+      {/* <Text style={styles.timer}>Inicia em 00:18</Text> */}
 
       <FlatList
         data={mockPlayers}
@@ -35,6 +35,6 @@ export default function QuizWaitingRoomScreen() {
       >
         <Text style={styles.buttonText}>Iniciar Quiz</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }

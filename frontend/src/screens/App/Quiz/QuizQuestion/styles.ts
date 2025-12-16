@@ -4,13 +4,20 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#39C67D",
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
   counter: {
+    paddingTop: 40,
     color: "#E8FFF3",
     textAlign: "center",
     marginBottom: 12,
+  },
+
+  timer: {
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 10,
   },
 
   question: {
@@ -26,6 +33,14 @@ export default StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     marginBottom: 12,
+  },
+
+  optionCorrect: {
+    backgroundColor: "#27ae60"
+  },
+
+  optionWrong: {
+    backgroundColor: "#e74c3c"
   },
 
   optionSelected: {
@@ -52,6 +67,7 @@ export default StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
+    paddingBottom: 40,
   },
 
   confirm: {

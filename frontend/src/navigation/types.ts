@@ -6,6 +6,9 @@ export type AuthStackParamList = {
   ForgotPassword: undefined; 
 };
 
+import { Quiz } from "../types/Quiz";
+import { Question } from "../types/Question";
+
 export type AppStackParamList = {
   HomeScreen: undefined;
   AdminCreate: undefined;
@@ -22,9 +25,16 @@ export type AppStackParamList = {
     quizId: string
   };
   QuizCountdown: {
-    quizId: string
+    quiz: Quiz;
+    questions: Question[];
   };
   QuizQuestion: {
-    index: number
+    quiz: Quiz;
+    questions: Question[];
+  };
+  QuizResult: {
+    quizId: string;
+    score: number;
+    totalTime: number;
   };
 };

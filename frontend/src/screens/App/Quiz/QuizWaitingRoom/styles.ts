@@ -4,10 +4,11 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#39C67D",
-    padding: 20,
+    paddingHorizontal: 20,
   },
 
   title: {
+    paddingTop: 40,
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
@@ -45,6 +46,7 @@ export default StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     marginTop: 20,
+    paddingBottom: 20,
   },
 
   buttonText: {

@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, RouteProp, useRoute } from "@react-navigation/native";
 import styles from "./styles";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { AppStackParamList } from "../../../../navigation";
 
 type NavigationProps = StackNavigationProp<AppStackParamList, "QuizCountdown">;
+type RouteProps = RouteProp<AppStackParamList, "QuizCountdown">;
 
 export default function QuizCountdownScreen() {
   const navigation = useNavigation<NavigationProps>();
+  const route = useRoute<RouteProps>();
+
+  const { quiz, questions } = route.params;
+
   const [seconds, setSeconds] = useState(5);
 
   useEffect(() => {
     if (seconds === 0) {
-      navigation.replace("QuizQuestion", { index: 0 });
+      navigation.replace("QuizQuestion", { quiz, questions });
       return;
     }
 
