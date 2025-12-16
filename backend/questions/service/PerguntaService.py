@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from questions.interfaces.IPerguntaService import IPerguntaService
 from questions.interfaces.IPerguntaRepository import IPerguntaRepository
 from questions.schemas.PerguntaInputModel import PerguntaInputModel 
@@ -28,3 +28,8 @@ class PerguntaService(IPerguntaService):
     def listar_perguntas(self) -> List[PerguntaViewModel]:
         perguntas = self.repository.listar_perguntas()
         return perguntas
+    
+    def buscar_perguntas_por_tags(self, tags: Optional[List[str]]) -> List[PerguntaViewModel]:
+        if not tags:
+             return self.repository.listar_perguntas()
+        return self.repository.list_perguntas_by_tags(tags)

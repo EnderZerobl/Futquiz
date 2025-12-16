@@ -14,6 +14,18 @@ class UserEntity(BaseModel):
     birth_date: date
     is_admin: bool
 
+class UserView(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    email: EmailStr
+    name: str
+    last_name: str
+    cpf: str
+    birth_date: date
+    is_admin: bool
+
+
 class UserInput(BaseModel):
     email: EmailStr
     password: str
@@ -32,13 +44,14 @@ class UserUpdateInput(BaseModel):
     birth_date: Optional[date] = None
     is_admin: Optional[bool] = None
 
-class UserView(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    
-    id: int
+
+class UserLogin(BaseModel):
     email: EmailStr
-    name: str
-    last_name: str
-    cpf: str
-    birth_date: date
-    is_admin: bool
+    password: str
+
+class PasswordRecoveryRequest(BaseModel):
+    email: EmailStr
+
+class PasswordResetConfirm(BaseModel):
+    token: str
+    new_password: str
