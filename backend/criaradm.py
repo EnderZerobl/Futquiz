@@ -29,7 +29,7 @@ def create_admin_user():
         name = "Admin"
         last_name = "Superuser"
         email = "admin@futquiz.com"
-        password = "123"
+        password = "Mm040511*"
         cpf = "999.999.999-99" # CPF fictício para evitar conflito com reais
         birth_date = date(2000, 1, 1)
         # ----------------------
@@ -55,8 +55,8 @@ def create_admin_user():
                 # Na prática, apenas atualizamos:
                 existing_user.password_hash = new_hash
                 changed = True
-                print("   -> Senha redefinida para '123'.")
-            
+                print(f"   -> Senha redefinida para {password}.")
+
             if changed:
                 db.commit()
                 print("✅ Atualizações salvas.")
