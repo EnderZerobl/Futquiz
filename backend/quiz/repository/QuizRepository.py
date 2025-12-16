@@ -15,14 +15,16 @@ class QuizRepository(IQuizRepository):
             nome_quiz=quiz_data.nome_quiz,
             tema=quiz_data.tema,
             tempo_por_questao_segundos=quiz_data.tempo_por_questao_segundos,
-            total_perguntas=len(quiz_data.pergunta_ids),
-            valor_recompensa=quiz_data.valor_recompensa
+            valor_recompensa=quiz_data.valor_recompensa,
+            total_perguntas=len(quiz_data.pergunta_ids)
         )
+
         
+        db_quiz.pergunta_ids = quiz_data.pergunta_ids 
+
         self._db.add(db_quiz)
         self._db.commit()
         self._db.refresh(db_quiz)
-        
         return QuizViewModel.model_validate(db_quiz)
 
     def list_available_quizzes(self) -> List[QuizViewModel]:

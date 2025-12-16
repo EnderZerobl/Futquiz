@@ -1,16 +1,30 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import List
+from sqlalchemy.orm import Session
+from shared.database import get_db
 from quiz.schemas.quiz_schema import QuizInputModel, QuizViewModel
 from quiz.service.QuizService import QuizService
+from quiz.repository.QuizRepository import QuizRepository
+from teams.repository.TeamRepository import TeamRepository
+from teams.service.TeamService import TeamService
 from auth.dependencies import get_current_admin, get_current_user 
 from quiz.schemas.metrics_schema import GlobalRankingViewModel, QuizMetricsViewModel
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/quiz",
+    tags=["Quiz"]
+)
+def get_quiz_service(db: Session = Depends(get_db)):
+    quiz_repo = QuizRepository(db)
+    team_repo = TeamRepository(db)
+    team_service = TeamService(repository=team_repo)
+    
+    return QuizService(repository=quiz_repo, team_service=team_service)
 
 @router.post("/create", response_model=QuizViewModel, status_code=status.HTTP_201_CREATED)
 def create_quiz(
     quiz_data: QuizInputModel,
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
@@ -21,11 +35,11 @@ def create_quiz(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro ao criar quiz.")
 
 @router.get("/list", response_model=List[QuizViewModel])
-def list_quizzes(quiz_service: QuizService = Depends()):
+def list_quizzes(quiz_service: QuizService = Depends(get_quiz_service)):
     return quiz_service.list_available_quizzes()
 
 @router.post("/start/{quiz_id}", status_code=status.HTTP_200_OK)
-def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(), user: dict = Depends(get_current_user)):
+def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(get_quiz_service), user: dict = Depends(get_current_user)):
     user_id = user.get("id")
     if user_id is None:
         raise HTTPException(
@@ -34,7 +48,6 @@ def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(), user: dict =
         )
     try:
         return quiz_service.start_quiz_session(quiz_id, user_id)
-        
     except HTTPException as e:
         raise e
     except Exception:
@@ -43,7 +56,7 @@ def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(), user: dict =
 @router.post("/end/{quiz_id}", status_code=status.HTTP_200_OK)
 def end_quiz_session(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin) 
 ):
     try:
@@ -56,7 +69,7 @@ def end_quiz_session(
 @router.post("/leave/{quiz_id}", status_code=status.HTTP_200_OK)
 def leave_quiz_session(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     user: dict = Depends(get_current_user)
 ):
     try:
@@ -72,7 +85,7 @@ def leave_quiz_session(
     summary="Obtém o ranking geral de jogadores (Top 100)."
 )
 def get_global_ranking_players(
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     user: dict = Depends(get_current_user)
 ):
     return quiz_service.get_global_ranking()
@@ -86,7 +99,7 @@ def get_global_ranking_players(
 )
 def get_quiz_metrics_by_id(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
@@ -101,7 +114,7 @@ def get_quiz_metrics_by_id(
 )
 def notify_new_quiz(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
+    quiz_service: QuizService = Depends(get_quiz_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
