@@ -23,6 +23,7 @@ const AppContent = () => {
   );
 };
 
+
 const App = () => {
   return (
     <SafeAreaProvider>
@@ -30,6 +31,9 @@ const App = () => {
         <AppContent />
       </AuthProvider>
     </SafeAreaProvider>
+    // <NavigationContainer>
+    //   <AppNavigator />
+    // </NavigationContainer>
   );
 };
 

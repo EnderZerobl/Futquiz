@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0AAD60",
+    backgroundColor: "#33CA7F",
     paddingTop: 50,
   },
 
@@ -43,5 +43,17 @@ export default StyleSheet.create({
   filterLabel: {
     color: "#fff",
     fontSize: 16,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    color: "#E8FFF3",
+    fontSize: 16,
+    opacity: 0.7,
+    textAlign: "center",
   }
 })

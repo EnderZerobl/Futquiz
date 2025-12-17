@@ -1,10 +1,11 @@
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
 from fastapi import HTTPException, status
 from jose import JWTError, jwt
 
 from auth.interfaces.IAuthService import IAuthService
 from auth.interfaces.IAuthRepository import IAuthRepository
 from auth.interfaces.IUserRepository import IUserRepository
+from auth.schemas.user_schema import UserView
 from shared.security import verify_password, create_access_token, SECRET_KEY, ALGORITHM
 
 class AuthService(IAuthService):
@@ -13,7 +14,7 @@ class AuthService(IAuthService):
         self.auth_repository = auth_repository
         self.user_repository = user_repository
 
-    def authenticate_user(self, credentials: Dict) -> str:
+    def authenticate_user(self, credentials: Dict) -> Tuple[str, UserView]:
         user = self.user_repository.get_user_by_email(credentials['email'])
         
         if not user:
@@ -28,7 +29,8 @@ class AuthService(IAuthService):
             "is_admin": user.is_admin
         })
         
-        return access_token
+        user_view = UserView.model_validate(user)
+        return access_token, user_view
 
     def logout_user(self, token: str) -> None:
         self.auth_repository.add_token_to_blocklist(token)

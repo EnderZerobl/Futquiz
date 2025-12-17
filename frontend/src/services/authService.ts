@@ -1,6 +1,13 @@
 import api from './api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+export interface UpdateUserData {
+  name?: string;
+  last_name?: string;
+  email?: string;
+  password?: string;
+}
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -12,12 +19,13 @@ export interface RegisterData {
   name: string;
   last_name: string;
   cpf: string;
-  birth_date: string; // Formato: YYYY-MM-DD
+  birth_date: string;
 }
 
 export interface LoginResponse {
   access_token: string;
   token_type: string;
+  user: User;
 }
 
 export interface User {
@@ -27,6 +35,7 @@ export interface User {
   last_name: string;
   cpf: string;
   birth_date: string;
+  is_admin: boolean;
 }
 
 class AuthService {
@@ -36,9 +45,10 @@ class AuthService {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
       const response = await api.post<LoginResponse>('/auth/login', credentials);
-      const { access_token } = response.data;
+      const { access_token, user } = response.data;
       
       await AsyncStorage.setItem(this.TOKEN_KEY, access_token);
+      await this.saveUser(user);
       
       return response.data;
     } catch (error: any) {
@@ -102,14 +112,35 @@ class AuthService {
   }
 
   async getCurrentUser(): Promise<User> {
-    // Usa apenas os dados salvos localmente (sem modificar o backend)
     const savedUser = await this.getUser();
     if (savedUser) {
       return savedUser;
     }
     
-    // Se não houver dados salvos, lança erro
     throw new Error('Dados do usuário não encontrados. Faça o registro primeiro.');
+  }
+
+  async updateUser(updateData: UpdateUserData): Promise<User> {
+    try {
+      const response = await api.put<User>('/users/me', updateData);
+      const updatedUser = response.data;
+      
+      await this.saveUser(updatedUser);
+      
+      return updatedUser;
+    } catch (error: any) {
+      let errorMessage = 'Erro ao atualizar dados do usuário';
+      
+      if (error.response) {
+        errorMessage = error.response.data?.detail || error.response.data?.message || errorMessage;
+      } else if (error.request) {
+        errorMessage = 'Não foi possível conectar ao servidor. Verifique sua conexão e se o backend está rodando.';
+      } else {
+        errorMessage = error.message || errorMessage;
+      }
+      
+      throw new Error(errorMessage);
+    }
   }
 }
 

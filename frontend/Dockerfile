@@ -16,5 +16,4 @@ EXPOSE 19000
 EXPOSE 19001
 EXPOSE 19002
 
-CMD ["sh", "-c", "if [ -n \"$HOST_IP\" ] && [ \"$HOST_IP\" != \"localhost\" ]; then REACT_NATIVE_PACKAGER_HOSTNAME=$HOST_IP npx expo start --lan; else npx expo start --lan; fi"]
-
+CMD ["sh", "-c", "if [ \"$USE_TUNNEL\" = \"true\" ]; then npx expo start --tunnel; elif [ -n \"$HOST_IP\" ] && [ \"$HOST_IP\" != \"localhost\" ]; then REACT_NATIVE_PACKAGER_HOSTNAME=$HOST_IP npx expo start --lan; else npx expo start --lan; fi"]

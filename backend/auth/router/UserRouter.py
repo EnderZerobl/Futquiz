@@ -6,8 +6,9 @@ from shared.database import get_db
 from auth.repository.UserRepository import UserRepository
 from auth.service.UserService import UserService
 from auth.schemas.user_schema import UserView, UserInput, UserUpdateInput
+from auth.model import User
 
-from auth.dependencies import get_current_admin
+from auth.dependencies import get_current_admin, get_current_user
 
 router = APIRouter(
     prefix="/users",
@@ -42,6 +43,18 @@ def create_user(
     admin_user: UserView = Depends(get_current_admin)
 ):
     return service.create_user(user_data.model_dump())
+
+@router.put(
+    "/me",
+    response_model=UserView,
+    summary="Atualiza os dados do usuário autenticado",
+)
+def update_current_user(
+    user_data: UserUpdateInput,
+    service: UserService = Depends(get_user_service),
+    current_user: User = Depends(get_current_user)
+):
+    return service.update_user(current_user.id, user_data)
 
 @router.put(
     "/{user_id}",

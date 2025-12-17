@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, Tuple
+from auth.schemas.user_schema import UserView
 
 class IAuthService(ABC):
         
     @abstractmethod
-    def authenticate_user(self, credentials: Dict) -> str:
+    def authenticate_user(self, credentials: Dict) -> Tuple[str, UserView]:
         raise NotImplementedError
 
     @abstractmethod
