@@ -34,6 +34,7 @@ services:
       - HOST_IP=${HOST_IP:-localhost}
       - EXPO_PUBLIC_API_URL=http://${HOST_IP:-localhost}:8000
       - REACT_NATIVE_PACKAGER_HOSTNAME=${HOST_IP:-localhost}
+      - USE_TUNNEL=${USE_TUNNEL:-false}
     networks:
       - futquiz-network
     depends_on:
@@ -50,4 +51,3 @@ volumes:
 networks:
   futquiz-network:
     driver: bridge
-

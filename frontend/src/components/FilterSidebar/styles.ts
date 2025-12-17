@@ -35,5 +35,22 @@ export default StyleSheet.create({
   filterText: {
     color: "#fff",
     fontSize: 14,
-  }
+  },
+  emptyText: {
+    color: "#E8FFF3",
+    opacity: 0.6,
+    textAlign: "center",
+    marginTop: 20,
+  },
+  tagItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: "#2FA36B",
+    marginBottom: 0,
+  },
+  tagText: {
+    color: "#E8FFF3",
+    fontSize: 14,
+  },
 })

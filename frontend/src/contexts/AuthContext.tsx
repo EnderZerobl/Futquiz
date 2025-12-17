@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,13 +38,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const checkAuth = async () => {
     try {
       const authenticated = await authService.isAuthenticated();
-      // Se houver token válido, autentica (dados mockados na HomeScreen)
       setIsAuthenticated(authenticated);
-      if (!authenticated) {
+      if (authenticated) {
+        const savedUser = await authService.getUser();
+        setUser(savedUser);
+      } else {
         setUser(null);
       }
     } catch (error) {
-      // Em caso de erro, não autentica
       setIsAuthenticated(false);
       setUser(null);
     } finally {
@@ -54,17 +56,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: LoginCredentials) => {
     try {
       setIsLoading(true);
-      // Limpa estado anterior em caso de erro
       setIsAuthenticated(false);
       setUser(null);
       
-      await authService.login(credentials);
+      const loginResponse = await authService.login(credentials);
       
-      // Após login bem-sucedido, autentica o usuário
-      // Os dados na HomeScreen são mockados, então não precisamos buscar dados do usuário
       setIsAuthenticated(true);
+      setUser(loginResponse.user);
     } catch (error: any) {
-      // Garante que não está autenticado em caso de erro
       setIsAuthenticated(false);
       setUser(null);
       const errorMsg = error?.message || 'Erro ao fazer login';
@@ -107,6 +106,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -116,6 +119,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         login,
         register,
         logout,
+        updateUser,
       }}
     >
       {children}

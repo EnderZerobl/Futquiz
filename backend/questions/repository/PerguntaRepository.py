@@ -23,9 +23,7 @@ class PerguntaRepository(IPerguntaRepository):
             opcoes_json = json.dumps(pergunta_input.opcoes),
             indice_opcao_correta = pergunta_input.indice_opcao_correta,
             tempo_quiz_segundos = pergunta_input.tempo_quiz_segundos,
-            
-            tags_json = json.dumps(tags_list),
-            imagem_url = pergunta_input.imagem_url
+            tags_json = json.dumps(tags_list)
         )
         
         self.db.add(nova_pergunta_db)
@@ -37,8 +35,7 @@ class PerguntaRepository(IPerguntaRepository):
             texto = nova_pergunta_db.texto,
             opcoes = json.loads(nova_pergunta_db.opcoes_json),
             tempo_quiz_segundos = nova_pergunta_db.tempo_quiz_segundos,
-            tags = tags_list, 
-            imagem_url = nova_pergunta_db.imagem_url
+            tags = tags_list
         )
 
     def listar_perguntas(self) -> List[PerguntaViewModel]:
@@ -46,13 +43,16 @@ class PerguntaRepository(IPerguntaRepository):
         perguntas_db_list = self.db.query(PerguntaTable).all()
         view_models = []
         for item in perguntas_db_list:
+            tags_list = []
+            if item.tags_json:
+                tags_list = json.loads(item.tags_json)
+            
             view_models.append(PerguntaViewModel(
                 id = item.id,
                 texto = item.texto,
                 opcoes = json.loads(item.opcoes_json),
                 tempo_quiz_segundos = item.tempo_quiz_segundos,
-                tags = item.tags, 
-                imagem_url = item.imagem_url
+                tags = tags_list
             ))
 
         return view_models
@@ -71,13 +71,16 @@ class PerguntaRepository(IPerguntaRepository):
         
         view_models = []
         for item in perguntas_db_list:
-             view_models.append(PerguntaViewModel(
+            tags_list = []
+            if item.tags_json:
+                tags_list = json.loads(item.tags_json)
+            
+            view_models.append(PerguntaViewModel(
                 id = item.id,
                 texto = item.texto,
                 opcoes = json.loads(item.opcoes_json),
                 tempo_quiz_segundos = item.tempo_quiz_segundos,
-                tags = item.tags,
-                imagem_url = item.imagem_url
+                tags = tags_list
             ))
             
         return view_models

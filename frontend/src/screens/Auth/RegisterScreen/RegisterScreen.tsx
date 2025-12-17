@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Alert
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { StackScreenProps } from '@react-navigation/stack';
 import { AuthStackParamList } from '../../../navigation/types';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -365,7 +366,11 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           nestedScrollEnabled={true}
         >
         <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
           <Image source={logoSoccerQuiz} style={styles.logo} resizeMode="contain" />
+          <View style={{ width: 24 }} />
         </View>
         
         <TextInput 
@@ -544,8 +549,11 @@ const styles = StyleSheet.create({
     paddingBottom: 250,
   },
   header: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 20,
+    marginTop: 10,
   },
   logo: {
     width: 320,

@@ -8,4 +8,3 @@ class PerguntaInputModel(BaseModel):
     indice_opcao_correta: int = Field(..., description = "O índice (0-based) da opção correta.")
     tempo_quiz_segundos: int = Field(20, ge=5, description = "Tempo limite em segundos para responder a questão.")
     tags: Optional[List[str]] = Field(None)
-    imagem_url: Optional[str] = Field(None)

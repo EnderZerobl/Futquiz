@@ -18,4 +18,16 @@ export type AppStackParamList = {
     tag: string;
     timePerQuestion: string;
   };
+  QuizWaitingRoom: {
+    quizId: string
+  };
+  QuizCountdown: {
+    quizId: string
+  };
+  QuizQuestion: {
+    index: number
+  };
+  ProfileScreen: undefined;
+  ConvidarUsuario: undefined;
+  EditarDados: undefined;
 };

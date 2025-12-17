@@ -5,6 +5,7 @@ export interface PerguntaInput {
   opcoes: string[];
   indice_opcao_correta: number;
   tempo_quiz_segundos?: number;
+  tags?: string[];
 }
 
 export interface Pergunta {
@@ -30,7 +31,7 @@ class PerguntaService {
       const response = await api.post<Pergunta>('/perguntas/create', pergunta);
       return response.data;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.detail || 'Erro ao criar pergunta';
+      const errorMessage = error.response?.data?.detail || error.response?.data?.message || 'Erro ao criar pergunta';
       throw new Error(errorMessage);
     }
   }

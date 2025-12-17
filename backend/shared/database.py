@@ -33,6 +33,7 @@ class PerguntaTable(Base):
     opcoes_json = Column("opcoes", String, nullable=False)
     indice_opcao_correta = Column(Integer, nullable=False)
     tempo_quiz_segundos = Column(Integer, nullable=False)
+    tags_json = Column(String, nullable=True)
 
 class QuizResultTable(Base):
     __tablename__ = 'quiz_results'

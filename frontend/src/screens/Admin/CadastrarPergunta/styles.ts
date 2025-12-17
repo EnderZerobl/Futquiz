@@ -21,7 +21,7 @@ export default StyleSheet.create({
     marginRight: 24,
   },
   label: {
-    color: "#E8FFF3",
+    color: "#fff",
     marginBottom: 6,
   },
   input: {
@@ -53,6 +53,64 @@ export default StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     color: "#fff",
+    marginBottom: 8,
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 8,
+    gap: 8,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#fff",
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkboxChecked: {
+    backgroundColor: "#22C55E",
+    borderColor: "#22C55E",
+  },
+  checkboxLabel: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "500",
+  },
+  selectedTagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 16,
+    marginTop: 8,
+  },
+  selectedTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2FAF73",
+    borderWidth: 1,
+    borderColor: "#fff",
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  removeTagButton: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#1E8E5A",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 6,
+  },
+  selectedTagText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "500",
   },
   tagsContainer: {
     flexDirection: "row",
@@ -69,9 +127,6 @@ export default StyleSheet.create({
     marginRight: 8,
     marginBottom: 8,
   },
-  tagSelected: {
-    backgroundColor: "#1E8E5A",
-  },
   tagImage: {
     width: 20,
     height: 20,
@@ -82,6 +137,17 @@ export default StyleSheet.create({
     color: "#fff",
     fontSize: 12,
   },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 20,
+  },
+  loadingText: {
+    color: "#fff",
+    fontSize: 12,
+    marginLeft: 8,
+  },
   submitButton: {
     backgroundColor: "#1E8E5A",
     padding: 16,
@@ -89,8 +155,24 @@ export default StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
+  submitButtonDisabled: {
+    opacity: 0.6,
+  },
   submitText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  optionLabel: {
+    color: "#fff",
+    fontSize: 12,
+    marginBottom: 6,
+  },
+  correctOption: {
+    borderWidth: 2,
+    borderColor: "#22C55E",
+  },
+  duplicateOption: {
+    borderWidth: 2,
+    borderColor: "#FF5252",
   },
 });

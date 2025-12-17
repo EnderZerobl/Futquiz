@@ -5,44 +5,45 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthNavigator, AppNavigator } from './src/navigation';
 import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 
-// const AppContent = () => {
-//   const { isAuthenticated, isLoading } = useAuth();
+const AppContent = () => {
+  const { isAuthenticated, isLoading } = useAuth();
 
-//   if (isLoading) {
-//     return (
-//       <View style={styles.loadingContainer}>
-//         <ActivityIndicator size="large" color="#33CA7F" />
-//       </View>
-//     );
-//   }
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#33CA7F" />
+      </View>
+    );
+  }
 
-//   return (
-//     <NavigationContainer>
-//       {isAuthenticated ? <AppNavigator /> : <AuthNavigator />}
-//     </NavigationContainer>
-//   );
-// };
-
-const App = () => {
   return (
-    // <SafeAreaProvider>
-    //   <AuthProvider>
-    //     <AppContent />
-    //   </AuthProvider>
-    // </SafeAreaProvider>
     <NavigationContainer>
-      <AppNavigator />
+      {isAuthenticated ? <AppNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };
 
-// const styles = StyleSheet.create({
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     backgroundColor: '#33CA7F',
-//   },
-// });
+
+const App = () => {
+  return (
+    <SafeAreaProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </SafeAreaProvider>
+    // <NavigationContainer>
+    //   <AppNavigator />
+    // </NavigationContainer>
+  );
+};
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#33CA7F',
+  },
+});
 
 export default App;

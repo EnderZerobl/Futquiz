@@ -1,10 +1,10 @@
 from teams.interfaces.ITeamRepository import ITeamRepository
 from teams.schemas.team_schema import TeamInputModel, TeamViewModel
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from typing import List, Optional
 
 class TeamService:
-    def __init__(self, repository: ITeamRepository = Depends()):
+    def __init__(self, repository: ITeamRepository):
         self._repository = repository
 
     def create_team(self, team_data: TeamInputModel) -> TeamViewModel:
