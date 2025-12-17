@@ -8,11 +8,20 @@ Esta entrega cobre os requisitos essenciais de Segurança, Autenticação e a ba
 
 | REQ | Domínio | Descrição da Funcionalidade | Status |
 | :---: | :--- | :--- | :--- |
-| **REQ 01** | Manter Usuário | Implementação da Inclusão (Cadastro) e Consulta de usuários (base para o CRUD completo). | COMPLETO |
-| **REQ 09** | Autenticação | Login, validação de credenciais e emissão de JSON Web Tokens (JWT) para proteger rotas. | COMPLETO |
-| **REQ 04** | Questões | Criação de Perguntas: Implementação do endpoint restrito a usuários com privilégios de Administrador. | COMPLETO |
-| **REQ 10** | Logout | Implementação da saída do sistema (destruição da sessão/token). | COMPLETO |
-| **REQ 07** | Quiz | Controle de Tempo de Resposta: Entidade Pergunta inclui o campo tempo\_quiz\_segundos, estabelecendo a fundação da lógica de tempo de jogo. | COMPLETO |
+| **REQ 01** | Manter Usuário | Implementação da inclusão (cadastro) e consulta de usuários, servindo como base para autenticação e controle de acesso. | COMPLETO |
+| **REQ 02** | Recuperação de Senha | Funcionalidade de recuperação de senha para permitir o acesso do usuário ao sistema. | COMPLETO |
+| **REQ 03** | Cadastrar Time | CRUD completo no domínio teams, essencial para categorização e filtragem das perguntas do quiz. | COMPLETO |
+| **REQ 04** | Cadastrar Perguntas | Criação de perguntas por meio de endpoint restrito a usuários com privilégios de Administrador, com validação das alternativas. | COMPLETO |
+| **REQ 05** | Cadastrar Respostas | Registro e validação das respostas dos jogadores, com verificação da alternativa correta integrada à lógica do quiz. | COMPLETO |
+| **REQ 06** | Disputar Quiz | Funcionalidade que permite a participação do jogador na disputa do quiz. | COMPLETO |
+| **REQ 07** | Encerrar Quiz | Controle de tempo de resposta por pergunta através do campo tempo\_quiz\_segundos, permitindo o encerramento da partida. | COMPLETO |
+| **REQ 08** | Ranking da Partida | Visualização do ranking por partida com base na pontuação obtida pelos jogadores. | COMPLETO |
+| **REQ 09** | Autenticação | Login, validação de credenciais e emissão de JSON Web Tokens (JWT) para proteger rotas da aplicação. | COMPLETO |
+| **REQ 10** | Logout | Implementação da saída do sistema com invalidação do token JWT. | COMPLETO |
+| **REQ 12** | Dashboard de Questões | Geração de métricas das perguntas, incluindo taxa média de acertos por meio de agregações SQL. | COMPLETO |
+| **REQ 13** | Jogador Mais Rápido | Identificação do jogador mais rápido com base no menor tempo total de resposta. | COMPLETO |
+| **REQ 14** | Ranking Geral | Criação do ranking geral de jogadores utilizando soma de pontuação e quantidade de partidas disputadas. | COMPLETO |
+| **REQ 17** | Notificação | Notificação aos usuários quando um novo quiz é adicionado ao sistema. | COMPLETO |
 
 ---
 <br>
