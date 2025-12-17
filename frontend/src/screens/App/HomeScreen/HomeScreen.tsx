@@ -62,7 +62,7 @@ export default function HomeScreen() {
   }));
 
   const fullName = user ? `${user.name} ${user.last_name}` : 'Usuário';
-  const emailUpper = user ? user.email.toUpperCase() : '';
+  const emailUpper = user?.email ? user.email.toUpperCase() : '';
 
   return (
     <View style={styles.container}>
@@ -73,7 +73,7 @@ export default function HomeScreen() {
           <View>
             <Text style={styles.headerHello}>OLÁ,</Text>
             <Text style={styles.headerName}>{fullName || 'Usuário'}</Text>
-            <Text style={styles.headerEmail}>{emailUpper || ''}</Text>
+            <Text style={styles.headerEmail}>{emailUpper}</Text>
           </View>
 
           <Ionicons name="person-circle" size={45} color="#fff" />

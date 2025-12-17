@@ -44,6 +44,9 @@ export default StyleSheet.create({
     justifyContent: "center",
     marginTop: 10,
   },
+  imageButtonDisabled: {
+    opacity: 0.5,
+  },
   imageButtonText: {
     color: "#fff",
     marginLeft: 8,
@@ -58,6 +61,9 @@ export default StyleSheet.create({
   submitText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  submitButtonDisabled: {
+    opacity: 0.6,
   },
   preview: {
     width: 120,

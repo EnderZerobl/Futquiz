@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AppStackParamList } from "../../../navigation/types";
 import styles from "./styles";
-import { addTeam } from "../../../mock/teams.mock";
+import teamService from "../../../services/teamService";
 import * as ImagePicker from "expo-image-picker";
-import { Image, Alert} from "react-native";
+import { Image } from "react-native";
+
+type NavigationProps = StackNavigationProp<AppStackParamList>;
 
 export default function CadastrarTimeScreen() {
 
@@ -28,7 +32,7 @@ export default function CadastrarTimeScreen() {
         }
     };
       
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProps>();
 
     const [team, setTeam] = useState({
         name: "",
@@ -39,14 +43,54 @@ export default function CadastrarTimeScreen() {
         stadium: "",
         badge: "",
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (field: string, value: string) => {
         setTeam({ ...team, [field]: value });
     };
 
-    const handleSubmit = () => {
-        addTeam(team);
-        navigation.goBack();
+    const handleSubmit = async () => {
+        if (!team.name || !team.acronym || !team.country || !team.city || !team.foundationYear || !team.stadium) {
+            Alert.alert("Atenção", "Por favor, preencha todos os campos obrigatórios.");
+            return;
+        }
+
+        const year = parseInt(team.foundationYear.replace(/\D/g, ""), 10);
+        if (isNaN(year) || year < 1800) {
+            Alert.alert("Erro", "Ano de fundação inválido. Deve ser um ano válido a partir de 1800.");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            await teamService.criarTime({
+                nome: team.name,
+                sigla: team.acronym,
+                pais_origem: team.country,
+                cidade_origem: team.city,
+                ano_fundacao: year,
+                estadio: team.stadium,
+                escudo_url: team.badge || null,
+            });
+
+            Alert.alert("Sucesso", "Time cadastrado com sucesso!", [
+                {
+                    text: "OK",
+                    onPress: () => navigation.navigate("AdminCreate"),
+                },
+            ]);
+        } catch (error: any) {
+            if (error.response?.status === 401) {
+                Alert.alert(
+                    "Erro de Autenticação",
+                    "Você precisa estar logado como administrador para cadastrar times. Por favor, faça login novamente."
+                );
+            } else {
+                Alert.alert("Erro", error.message || "Erro ao cadastrar time.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
@@ -79,23 +123,25 @@ export default function CadastrarTimeScreen() {
                 style={styles.input}
                 keyboardType="numeric"
                 value={team.foundationYear}
-                // onChangeText={(v) => handleChange("foundationYear", v)}
                 onChangeText={(text) => {
                     const cleaned = text.replace(/\D/g, "");
-                    let formatted = cleaned;
-                    if (cleaned.length >= 3)
-                        formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
-                    if (cleaned.length >= 5)
-                        formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
-                    handleChange("foundationYear", formatted)
-                    // setFoundationYear(formatted);
+                    if (cleaned.length <= 4) {
+                        handleChange("foundationYear", cleaned);
+                    }
                 }}
+                maxLength={4}
+                placeholder="Ex: 1905"
+                placeholderTextColor="#aaa"
             />
 
             <Text style={styles.label}>Estádio</Text>
             <TextInput style={styles.input} onChangeText={(v) => handleChange("stadium", v)} />
 
-            <TouchableOpacity style={styles.imageButton} onPress={pickImage}>
+            <TouchableOpacity 
+                style={[styles.imageButton, styles.imageButtonDisabled]} 
+                onPress={() => {}}
+                disabled={true}
+            >
                 <Ionicons name="image-outline" size={20} color="#fff" />
                 <Text style={styles.imageButtonText}>Selecionar Imagem</Text>
             </TouchableOpacity>
@@ -105,8 +151,16 @@ export default function CadastrarTimeScreen() {
                 style={styles.preview} />
             ) : null}
 
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.submitText}>Finalizar Cadastro</Text>
+            <TouchableOpacity 
+                style={[styles.submitButton, isLoading && styles.submitButtonDisabled]} 
+                onPress={handleSubmit}
+                disabled={isLoading}
+            >
+                {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                ) : (
+                    <Text style={styles.submitText}>Finalizar Cadastro</Text>
+                )}
             </TouchableOpacity>
         </View>
         </ScrollView>

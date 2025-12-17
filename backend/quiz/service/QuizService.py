@@ -4,13 +4,13 @@ from teams.service.TeamService import TeamService
 from shared.database import QuizResultTable, UserTable 
 from quiz.schemas.metrics_schema import QuizMetricsViewModel, GlobalRankingViewModel
 from sqlalchemy import func, desc
-from fastapi import Depends, HTTPException, status
+from fastapi import HTTPException, status
 from typing import List
 
 class QuizService:
     def __init__(self, 
-                 repository: IQuizRepository = Depends(),
-                 team_service: TeamService = Depends()): 
+                 repository: IQuizRepository,
+                 team_service: TeamService): 
         self._repository = repository
         self._team_service = team_service
 

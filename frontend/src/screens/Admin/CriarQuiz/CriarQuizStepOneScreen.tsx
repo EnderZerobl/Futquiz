@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, ScrollView, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { getTeams } from "../../../mock/teams.mock";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { AppStackParamList } from "../../../navigation/types";
+import warningIcon from "../../../../assets/icons/warning.png";
 import styles from "./styles";
 
-export default function CriarQuizStepOneScreen() {
-  const navigation = useNavigation();
-  const teams = getTeams();
+type NavigationProps = StackNavigationProp<AppStackParamList>;
 
-  const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
+export default function CriarQuizStepOneScreen() {
+  const navigation = useNavigation<NavigationProps>();
 
   const [hasReward, setHasReward] = useState(false);
   const [title, setTitle] = useState("");
@@ -17,25 +18,32 @@ export default function CriarQuizStepOneScreen() {
   const [timePerQuestion, setTimePerQuestion] = useState("");
 
   const handleNext = () => {
-    navigation.navigate("CriarQuizStepTwo" as never, {
+    if (!title.trim() || !timePerQuestion.trim()) {
+      return;
+    }
+
+    navigation.navigate("CriarQuizStepTwo", {
         title,
         description,
         timePerQuestion,
         hasReward,
-        teamId: selectedTeamId,
-    } as never);
+    });
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView 
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
         <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="#fff" />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>CRIAR QUIZ</Text>
+            <View style={{ width: 24 }} />
         </View>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setHasReward(false)}>
             <Text style={styles.radio}>{!hasReward ? "◉" : "○"} SEM RECOMPENSA</Text>
         </TouchableOpacity>
 
@@ -43,6 +51,7 @@ export default function CriarQuizStepOneScreen() {
             <Text style={styles.radioDisabled}>○ COM RECOMPENSA <Text style={styles.comingSoon}>(em breve)</Text></Text>
         </View>
 
+        <Text style={styles.label}>Nome</Text>
         <TextInput
             style={styles.input}
             placeholder="Digite o nome do quiz"
@@ -50,7 +59,14 @@ export default function CriarQuizStepOneScreen() {
             value={title}
             onChangeText={setTitle}
         />
+        {!title.trim() && (
+          <View style={styles.hintContainer}>
+            <Image source={warningIcon} style={styles.warningIcon} />
+            <Text style={styles.hint}>Deve haver um nome para o quiz</Text>
+          </View>
+        )}
 
+        <Text style={styles.label}>Descrição</Text>
         <TextInput
             style={styles.input}
             placeholder="Descreva o quiz"
@@ -59,31 +75,25 @@ export default function CriarQuizStepOneScreen() {
             onChangeText={setDescription}
         />
 
-        <Text style={styles.label}>Tema do Quiz</Text>
-        {teams.map((team) => (
-            <TouchableOpacity
-            key={team.id}
-            style={[
-                styles.teamItem,
-                selectedTeamId === team.id && styles.teamSelected,
-            ]}
-            onPress={() => setSelectedTeamId(team.id)}
-            >
-            <Text style={styles.teamName}>{team.name}</Text>
-            </TouchableOpacity>
-        ))}
-
+        <Text style={styles.label}>Tempo das perguntas</Text>
         <TextInput
             style={styles.input}
-            placeholder="Tempo por questão (ex: 30 seg)"
+            placeholder="Digite o tempo em segundos"
             placeholderTextColor="#E8FFF3"
             value={timePerQuestion}
             onChangeText={setTimePerQuestion}
+            keyboardType="numeric"
         />
+        {!timePerQuestion.trim() && (
+          <View style={styles.hintContainer}>
+            <Image source={warningIcon} style={styles.warningIcon} />
+            <Text style={styles.hint}>Deve haver um tempo para as perguntas</Text>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.submitButton} onPress={handleNext}>
             <Text style={styles.submitText}>Avançar</Text>
         </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }

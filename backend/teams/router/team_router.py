@@ -1,15 +1,22 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import List, Optional
+from sqlalchemy.orm import Session
 from teams.schemas.team_schema import TeamInputModel, TeamViewModel
 from teams.service.TeamService import TeamService
+from teams.repository.TeamRepository import TeamRepository
+from shared.database import get_db
 from auth.dependencies import get_current_admin
 
 router = APIRouter()
 
+def get_team_service(db: Session = Depends(get_db)):
+    repo = TeamRepository(db)
+    return TeamService(repo)
+
 @router.post("/create", response_model=TeamViewModel, status_code=status.HTTP_201_CREATED)
 def create_team(
     team_data: TeamInputModel,
-    team_service: TeamService = Depends(),
+    team_service: TeamService = Depends(get_team_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     try:
@@ -23,7 +30,7 @@ def create_team(
 def update_team(
     team_id: int,
     update_data: TeamInputModel, 
-    team_service: TeamService = Depends(),
+    team_service: TeamService = Depends(get_team_service),
     admin_user: dict = Depends(get_current_admin)
 ):
     """Atualiza dados de um time (Restrito a ADM)."""
@@ -35,19 +42,18 @@ def update_team(
     except HTTPException as e:
         raise e
 
-@router.delete("/delete/{team_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/delete/{team_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
 def delete_team(
     team_id: int,
-    team_service: TeamService = Depends(),
+    team_service: TeamService = Depends(get_team_service),
     admin_user: dict = Depends(get_current_admin)
-):
+) -> None:
     """Deleta um time (Restrito a ADM)."""
     try:
         team_service.delete_team(team_id)
-        return {"detail": "Time excluído com sucesso."}
     except HTTPException as e:
         raise e
 
 @router.get("/list", response_model=List[TeamViewModel])
-def list_teams(team_service: TeamService = Depends()):
+def list_teams(team_service: TeamService = Depends(get_team_service)):
     return team_service.list_teams()

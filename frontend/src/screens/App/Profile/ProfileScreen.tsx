@@ -57,8 +57,6 @@ const ProfileScreen = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      // O logout já faz com que o isAuthenticated seja false,
-      // e o App.tsx automaticamente redireciona para AuthNavigator
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }
@@ -79,7 +77,7 @@ const ProfileScreen = () => {
             <View>
               <Text style={styles.roleText}>{user?.is_admin ? 'ADMIN' : 'USER'}</Text>
               <Text style={styles.nameText}>{user ? `${user.name} ${user.last_name}` : 'Usuário'}</Text>
-              <Text style={styles.emailText}>{user ? user.email.toUpperCase() : ''}</Text>
+              <Text style={styles.emailText}>{user?.email ? user.email.toUpperCase() : ''}</Text>
             </View>
             <Ionicons name="person-circle" size={50} color="#fff" />
           </View>

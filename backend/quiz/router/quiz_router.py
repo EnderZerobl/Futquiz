@@ -1,17 +1,30 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import List
+from sqlalchemy.orm import Session
 from quiz.schemas.quiz_schema import QuizInputModel, QuizViewModel
 from quiz.service.QuizService import QuizService
+from quiz.repository.QuizRepository import QuizRepository
+from teams.router.team_router import get_team_service
+from teams.service.TeamService import TeamService
+from shared.database import get_db
 from auth.dependencies import get_current_admin, get_current_user 
+from auth.model import User
 from quiz.schemas.metrics_schema import GlobalRankingViewModel, QuizMetricsViewModel
 
 router = APIRouter()
 
+def get_quiz_service(
+    db: Session = Depends(get_db),
+    team_service: TeamService = Depends(get_team_service)
+):
+    repo = QuizRepository(db)
+    return QuizService(repo, team_service)
+
 @router.post("/create", response_model=QuizViewModel, status_code=status.HTTP_201_CREATED)
 def create_quiz(
     quiz_data: QuizInputModel,
-    quiz_service: QuizService = Depends(),
-    admin_user: dict = Depends(get_current_admin)
+    quiz_service: QuizService = Depends(get_quiz_service),
+    admin_user: User = Depends(get_current_admin)
 ):
     try:
         return quiz_service.create_quiz(quiz_data)
@@ -21,19 +34,13 @@ def create_quiz(
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro ao criar quiz.")
 
 @router.get("/list", response_model=List[QuizViewModel])
-def list_quizzes(quiz_service: QuizService = Depends()):
+def list_quizzes(quiz_service: QuizService = Depends(get_quiz_service)):
     return quiz_service.list_available_quizzes()
 
 @router.post("/start/{quiz_id}", status_code=status.HTTP_200_OK)
-def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(), user: dict = Depends(get_current_user)):
-    user_id = user.get("id")
-    if user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
-            detail="ID de usuário ausente no token."
-        )
+def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(get_quiz_service), user: User = Depends(get_current_user)):
     try:
-        return quiz_service.start_quiz_session(quiz_id, user_id)
+        return quiz_service.start_quiz_session(quiz_id, user.id)
         
     except HTTPException as e:
         raise e
@@ -43,8 +50,8 @@ def start_quiz(quiz_id: int, quiz_service: QuizService = Depends(), user: dict =
 @router.post("/end/{quiz_id}", status_code=status.HTTP_200_OK)
 def end_quiz_session(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
-    admin_user: dict = Depends(get_current_admin) 
+    quiz_service: QuizService = Depends(get_quiz_service),
+    admin_user: User = Depends(get_current_admin) 
 ):
     try:
         return quiz_service.end_quiz_admin(quiz_id)
@@ -56,12 +63,11 @@ def end_quiz_session(
 @router.post("/leave/{quiz_id}", status_code=status.HTTP_200_OK)
 def leave_quiz_session(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
-    user: dict = Depends(get_current_user)
+    quiz_service: QuizService = Depends(get_quiz_service),
+    user: User = Depends(get_current_user)
 ):
     try:
-        user_id = user.get("id")
-        return quiz_service.leave_quiz_session(quiz_id, user_id)
+        return quiz_service.leave_quiz_session(quiz_id, user.id)
     except Exception:
         raise HTTPException(status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Erro ao processar saída do quiz.")
     
@@ -72,8 +78,8 @@ def leave_quiz_session(
     summary="Obtém o ranking geral de jogadores (Top 100)."
 )
 def get_global_ranking_players(
-    quiz_service: QuizService = Depends(),
-    user: dict = Depends(get_current_user)
+    quiz_service: QuizService = Depends(get_quiz_service),
+    user: User = Depends(get_current_user)
 ):
     return quiz_service.get_global_ranking()
 
@@ -86,8 +92,8 @@ def get_global_ranking_players(
 )
 def get_quiz_metrics_by_id(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
-    admin_user: dict = Depends(get_current_admin)
+    quiz_service: QuizService = Depends(get_quiz_service),
+    admin_user: User = Depends(get_current_admin)
 ):
     try:
         return quiz_service.get_quiz_metrics(quiz_id)
@@ -101,8 +107,8 @@ def get_quiz_metrics_by_id(
 )
 def notify_new_quiz(
     quiz_id: int,
-    quiz_service: QuizService = Depends(),
-    admin_user: dict = Depends(get_current_admin)
+    quiz_service: QuizService = Depends(get_quiz_service),
+    admin_user: User = Depends(get_current_admin)
 ):
     try:
         return quiz_service.trigger_new_quiz_notification(quiz_id)

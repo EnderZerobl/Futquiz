@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 
 class TeamInputModel(BaseModel):
@@ -11,6 +11,8 @@ class TeamInputModel(BaseModel):
     escudo_url: Optional[str] = None
 
 class TeamViewModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     nome: str
     sigla: str
