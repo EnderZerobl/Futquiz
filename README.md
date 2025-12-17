@@ -63,7 +63,7 @@ Acesse a documentação interativa da API em:
 1. Certifique-se de que os containers estão rodando:
 
 ```bash
-make up-logs
+make up-tunnel
 ```
 
 2. Uma vez no app, escaneie o QRCode ou digite o link, que aparecem no terminal
