@@ -27,4 +27,7 @@ export type AppStackParamList = {
   QuizQuestion: {
     index: number
   };
+  ProfileScreen: undefined;
+  ConvidarUsuario: undefined;
+  EditarDados: undefined;
 };

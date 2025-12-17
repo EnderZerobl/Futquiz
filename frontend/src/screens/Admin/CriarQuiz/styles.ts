@@ -6,6 +6,21 @@ export default StyleSheet.create({
         flexGrow: 1,
         paddingHorizontal: 20,
     },
+    header: {
+        paddingTop: 50,
+        paddingHorizontal: 0,
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 16,
+    },
+    headerTitle: {
+        flex: 1,
+        textAlign: "center",
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "bold",
+        marginRight: 24,
+    },
     title: {    
         paddingTop: 50,
         color: "#fff",

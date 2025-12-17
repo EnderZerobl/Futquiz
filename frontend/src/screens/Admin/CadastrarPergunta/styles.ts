@@ -21,7 +21,7 @@ export default StyleSheet.create({
     marginRight: 24,
   },
   label: {
-    color: "#E8FFF3",
+    color: "#fff",
     marginBottom: 6,
   },
   input: {
@@ -94,7 +94,7 @@ export default StyleSheet.create({
     fontWeight: "bold",
   },
   optionLabel: {
-    color: "#94A3B8",
+    color: "#fff",
     fontSize: 12,
     marginBottom: 6,
   },
@@ -104,7 +104,7 @@ export default StyleSheet.create({
   },
   correctText: {
     marginTop: 6,
-    color: "#22C55E",
+    color: "#fff",
     fontSize: 12,
     fontWeight: "600",
   },

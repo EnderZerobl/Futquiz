@@ -28,7 +28,12 @@ export default function CriarQuizStepOneScreen() {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>CRIAR QUIZ</Text>
+        <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>CRIAR QUIZ</Text>
+        </View>
 
         <TouchableOpacity>
             <Text style={styles.radio}>{!hasReward ? "◉" : "○"} SEM RECOMPENSA</Text>

@@ -1,21 +1,16 @@
 .PHONY: help up up-attach up-logs up-tunnel down build restart logs frontend-logs backend-logs attach-frontend
 
-# Detecta se está rodando no WSL e pega o IP do Windows host
 IS_WSL := $(shell grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null && echo "true" || echo "false")
 
 ifeq ($(IS_WSL),true)
-  # No WSL, pega o IP do Windows na rede local usando comando do Windows
   HOST_IP := $(shell powershell.exe -Command "(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias 'Wi-Fi' -ErrorAction SilentlyContinue).IPAddress" 2>/dev/null | tr -d '\r\n')
   ifeq ($(HOST_IP),)
-    # Fallback: tenta Ethernet
     HOST_IP := $(shell powershell.exe -Command "(Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias 'Ethernet' -ErrorAction SilentlyContinue).IPAddress" 2>/dev/null | tr -d '\r\n')
   endif
   ifeq ($(HOST_IP),)
-    # Fallback: pega do gateway (pode não ser o IP real, mas é melhor que nada)
     HOST_IP := $(shell ip route show | grep -i default | awk '{print $$3}' 2>/dev/null)
   endif
 else
-  # Não é WSL, usa detecção normal
   HOST_IP := $(shell hostname -I | awk '{print $$1}')
 endif
 

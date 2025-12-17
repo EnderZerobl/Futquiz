@@ -50,7 +50,10 @@ export default function CadastrarTimeScreen() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView 
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+        >
         <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Ionicons name="arrow-back" size={24} color="#fff" />

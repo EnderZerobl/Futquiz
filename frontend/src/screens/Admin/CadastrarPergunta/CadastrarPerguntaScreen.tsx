@@ -66,7 +66,10 @@ export default function CadastrarPerguntaScreen() {
   };  
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView 
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
@@ -80,7 +83,7 @@ export default function CadastrarPerguntaScreen() {
         value={question}
         onChangeText={setQuestion}
         placeholder="Digite a pergunta"
-        placeholderTextColor="#aaa"
+        placeholderTextColor="#fff"
       />
   
       <Text style={styles.label}>Alternativas</Text>
@@ -109,7 +112,7 @@ export default function CadastrarPerguntaScreen() {
                 )
               }
               placeholder={`Digite a opção ${index + 1}`}
-              placeholderTextColor="#aaa"
+              placeholderTextColor="#fff"
             />
   
             {correctOptionId === option.id && (

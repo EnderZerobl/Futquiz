@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getQuestions } from "../../../mock/questions.mock";
 import { addQuiz } from "../../../mock/quiz.mock";
@@ -38,7 +39,16 @@ export default function CriarQuizStepTwoScreen() {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView 
+            contentContainerStyle={styles.container}
+            showsVerticalScrollIndicator={false}
+        >
+        <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>SELECIONAR PERGUNTAS</Text>
+        </View>
         <Text style={styles.label}>Selecionar perguntas</Text>
 
         {questions.map((q) => (

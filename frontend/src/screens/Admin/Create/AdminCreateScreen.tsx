@@ -23,7 +23,7 @@ export default function AdminCreateScreen() {
           </View>
 
           <View style={styles.avatar}>
-            <Ionicons name="person" size={26} color="#2ECC71" />
+            <Ionicons name="person" size={26} color="#33CA7F" />
           </View>
         </View>
 

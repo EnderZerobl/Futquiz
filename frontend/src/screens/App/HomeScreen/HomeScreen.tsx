@@ -1,26 +1,58 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
 import QuizCard from "../../../components/QuizCard";
 import FilterSidebar from "../../../components/FilterSidebar";
 import FooterNavigation from "../../../components/FooterNavigation";
-import { quizzesMock } from "../../../mock/quiz.mock";
+import { useAuth } from "../../../contexts/AuthContext";
 import { getTeams } from "../../../mock/teams.mock";
+import quizService, { QuizViewModel } from "../../../services/quizService";
+import { Quiz } from "../../../types/Quiz";
 
 import styles from "./styles";
 
 export default function HomeScreen() {
+  const { user } = useAuth();
   const [expandedQuizId, setExpandedQuizId] = useState<string | null>(null);
   const [filterOpen, setFilterOpen] = useState(false);
-
-  const [quizzes, setQuizzes] = useState(quizzesMock);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [loading, setLoading] = useState(true);
   const teams = getTeams();
-  
+
+  const mapQuizViewModelToQuiz = (quizViewModel: QuizViewModel): Quiz => {
+    const team = teams.find((t) => t.name.toLowerCase() === quizViewModel.tema.toLowerCase());
+    
+    return {
+      id: quizViewModel.id.toString(),
+      name: quizViewModel.nome_quiz,
+      description: quizViewModel.tema || quizViewModel.nome_quiz,
+      questionsIds: [],
+      timePerQuestion: quizViewModel.tempo_por_questao_segundos,
+      teamId: team?.id || quizViewModel.tema || "",
+      hasReward: quizViewModel.valor_recompensa !== null && quizViewModel.valor_recompensa > 0,
+      rewardValue: quizViewModel.valor_recompensa || undefined,
+    };
+  };
+
+  const loadQuizzes = async () => {
+    try {
+      setLoading(true);
+      const quizzesFromApi = await quizService.listarQuizzes();
+      const mappedQuizzes = quizzesFromApi.map(mapQuizViewModelToQuiz);
+      setQuizzes(mappedQuizzes);
+    } catch (error) {
+      console.error("Erro ao carregar quizzes:", error);
+      setQuizzes([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useFocusEffect(
     React.useCallback(() => {
-      setQuizzes([...quizzesMock]);
+      loadQuizzes();
     }, [])
   );
 
@@ -29,8 +61,8 @@ export default function HomeScreen() {
     name: team.name,
   }));
 
-  const fullName = "User";
-  const emailUpper = "USER@GMAIL.COM";
+  const fullName = user ? `${user.name} ${user.last_name}` : 'Usuário';
+  const emailUpper = user ? user.email.toUpperCase() : '';
 
   return (
     <View style={styles.container}>
@@ -55,7 +87,12 @@ export default function HomeScreen() {
           <Text style={styles.filterLabel}>Filtrar</Text>
         </TouchableOpacity>
 
-        {quizzes.length === 0? (
+        {loading ? (
+          <View style={styles.emptyContainer}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={styles.emptyText}>Carregando quizzes...</Text>
+          </View>
+        ) : quizzes.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>
               Sem quiz disponível no momento.
@@ -84,7 +121,7 @@ export default function HomeScreen() {
         )}        
       </View>
 
-      <FooterNavigation role="ADMIN" />
+      <FooterNavigation role={user?.is_admin ? "ADMIN" : "USER"} />
     </View>
   )
 }
