@@ -13,6 +13,11 @@ Esta entrega cobre os requisitos essenciais de Segurança, Autenticação e a ba
 | **REQ 04** | Questões | Criação de Perguntas: Implementação do endpoint restrito a usuários com privilégios de Administrador. | COMPLETO |
 | **REQ 10** | Logout | Implementação da saída do sistema (destruição da sessão/token). | COMPLETO |
 | **REQ 07** | Quiz | Controle de Tempo de Resposta: Entidade Pergunta inclui o campo tempo\_quiz\_segundos, estabelecendo a fundação da lógica de tempo de jogo. | COMPLETO |
+| **REQ 04** | Cadastrar Pergunta | Implementação do cadastro de perguntas. | COMPLETO |
+| **REQ 03** | Cadastrar Time | Implementação do cadastro de times. | COMPLETO |
+| **REQ 05** | Cadastrar Resposta | Implementação do cadastro de respostas. | COMPLETO |
+| **REQ 05** | Cadastrar Resposta | Implementação do cadastro de respostas. | COMPLETO |
+
 
 ---
 <br>
@@ -31,6 +36,22 @@ make build
 make up-logs
 ```
 
+4. Aguarde rodar e entre em ```http://localhost:8081/``` para acessar o app pela web
+
+
+
+## Login
+
+O banco já está populado com dois logins, um de user e outro de admin
+
+```
+User: joao@gmail.com
+Pass: 12345678@
+
+Admin: maria@gmail.com
+Pass: 12345678@
+```
+
 ## 📚 Documentação da API (Swagger)
 
 Acesse a documentação interativa da API em:
@@ -40,8 +61,9 @@ Acesse a documentação interativa da API em:
 ## 📱 Como rodar o app via Expo Go
 
 1. Certifique-se de que os containers estão rodando:
+
 ```bash
-make up
+make up-logs
 ```
 
 2. Uma vez no app, escaneie o QRCode ou digite o link, que aparecem no terminal
