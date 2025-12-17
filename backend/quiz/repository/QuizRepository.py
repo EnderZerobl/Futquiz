@@ -24,7 +24,10 @@ class QuizRepository(IQuizRepository):
             valor_recompensa=quiz_data.valor_recompensa if quiz_data.valor_recompensa is not None else 0.0,
             pergunta_ids_json=json.dumps(quiz_data.pergunta_ids)
         )
+
         
+        db_quiz.pergunta_ids = quiz_data.pergunta_ids 
+
         self._db.add(db_quiz)
         self._db.commit()
         self._db.refresh(db_quiz)

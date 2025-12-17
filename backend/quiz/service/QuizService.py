@@ -59,7 +59,7 @@ class QuizService:
     
     def get_global_ranking(self) -> List[GlobalRankingViewModel]:
         ranking_data = (
-            self._repository.db.query(
+            self._repository._db.query(
                 QuizResultTable.user_id,
                 func.sum(QuizResultTable.total_score).label("total_score_general"),
                 func.count(QuizResultTable.quiz_id).label("total_quizzes_played"),
@@ -86,7 +86,7 @@ class QuizService:
     def get_quiz_metrics(self, quiz_id: int) -> QuizMetricsViewModel:
         
         results_db = (
-            self._repository.db.query(QuizResultTable, UserTable.name)
+            self._repository._db.query(QuizResultTable, UserTable.name)
             .join(UserTable, QuizResultTable.user_id == UserTable.id)
             .filter(QuizResultTable.quiz_id == quiz_id)
             .order_by(desc(QuizResultTable.total_score))
@@ -96,8 +96,8 @@ class QuizService:
         if not results_db:
             raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Nenhum resultado encontrado para este quiz.")
             
-        results_view = [...] 
-        fastest_result = min(results_view, key=lambda r: r.total_time_ms) if results_view else None
+        results_view = [] 
+        fastest_result = None 
 
         quiz_details = self._repository.get_quiz_details(quiz_id)
         
